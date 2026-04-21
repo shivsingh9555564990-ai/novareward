@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Coins, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import novaLogo from "@/assets/nova-logo.png";
 
 const Splash = () => {
   const navigate = useNavigate();
@@ -10,39 +10,75 @@ const Splash = () => {
   useEffect(() => {
     const t = setTimeout(() => {
       if (loading) return;
-      const seenOnboarding = localStorage.getItem("coinbazaar-onboarded");
+      const seenOnboarding = localStorage.getItem("novareward-onboarded");
       if (user) navigate("/home", { replace: true });
       else if (seenOnboarding) navigate("/login", { replace: true });
       else navigate("/onboarding", { replace: true });
-    }, 1800);
+    }, 2200);
     return () => clearTimeout(t);
   }, [navigate, user, loading]);
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center relative overflow-hidden">
-      {/* Floating coins */}
-      {[...Array(6)].map((_, i) => (
+    <div className="min-h-screen bg-gradient-hero grid-bg flex items-center justify-center relative overflow-hidden">
+      {/* Scanning neon line */}
+      <div className="absolute inset-x-0 h-px bg-gradient-neon shadow-neon animate-scan" />
+
+      {/* Floating orbs */}
+      {[...Array(8)].map((_, i) => (
         <div
           key={i}
-          className="absolute w-8 h-8 rounded-full bg-gradient-coin opacity-70 animate-float"
+          className="absolute w-2 h-2 rounded-full bg-primary shadow-glow animate-float"
           style={{
-            top: `${15 + i * 12}%`,
-            left: `${10 + (i * 17) % 80}%`,
-            animationDelay: `${i * 0.3}s`,
+            top: `${10 + (i * 11) % 80}%`,
+            left: `${8 + (i * 19) % 84}%`,
+            animationDelay: `${i * 0.25}s`,
+            opacity: 0.6,
           }}
         />
       ))}
 
-      <div className="relative z-10 flex flex-col items-center gap-6 animate-scale-in">
+      {/* Glow halos behind logo */}
+      <div className="absolute w-80 h-80 rounded-full bg-primary/30 blur-3xl animate-pulse-glow" />
+      <div className="absolute w-96 h-96 rounded-full bg-secondary/20 blur-3xl" />
+
+      <div className="relative z-10 flex flex-col items-center gap-8 animate-scale-in">
+        {/* Orbiting particles */}
         <div className="relative">
-          <div className="w-28 h-28 rounded-3xl bg-white/95 flex items-center justify-center shadow-glow animate-pulse-glow">
-            <Coins className="w-14 h-14 text-primary" strokeWidth={2.5} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute w-3 h-3 rounded-full bg-accent shadow-neon animate-orbit" style={{ animationDuration: "6s" }} />
+            <div className="absolute w-2 h-2 rounded-full bg-secondary shadow-neon animate-orbit" style={{ animationDuration: "9s", animationDelay: "-2s" }} />
+            <div className="absolute w-2 h-2 rounded-full bg-coin shadow-coin animate-orbit" style={{ animationDuration: "7s", animationDelay: "-4s" }} />
           </div>
-          <Sparkles className="absolute -top-2 -right-2 w-7 h-7 text-coin animate-float" />
+
+          <img
+            src={novaLogo}
+            alt="NovaReward logo"
+            width={160}
+            height={160}
+            className="w-40 h-40 rounded-3xl shadow-glow animate-pulse-glow relative z-10"
+          />
         </div>
-        <div className="text-center">
-          <h1 className="text-4xl font-extrabold text-primary-foreground mb-1">CoinBazaar</h1>
-          <p className="text-primary-foreground/85 text-sm font-medium">Earn • Play • Redeem</p>
+
+        <div className="text-center space-y-2">
+          <h1 className="text-5xl font-extrabold tracking-tight">
+            <span className="text-foreground">Nova</span>
+            <span className="text-success">Reward</span>
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium tracking-[0.3em] uppercase">
+            Earn · Play · Redeem
+          </p>
+          <p className="text-xs text-primary/80 font-mono tracking-widest pt-2">// FUTURE OF REWARDS · v3.0</p>
+        </div>
+
+        {/* Loading indicator */}
+        <div className="flex gap-2 mt-4">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="w-2 h-2 rounded-full bg-primary animate-pulse-glow"
+              style={{ animationDelay: `${i * 0.2}s` }}
+            />
+          ))}
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -29,11 +30,17 @@ const Login = () => {
   };
 
   const handleGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/home` },
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: `${window.location.origin}/home`,
     });
-    if (error) toast.error("Google sign-in के लिए provider configure करना होगा");
+    if (result.error) {
+      toast.error(result.error.message || "Google sign-in failed");
+      return;
+    }
+    if (!result.redirected) {
+      toast.success("Welcome! 🎉");
+      navigate("/home", { replace: true });
+    }
   };
 
   return (

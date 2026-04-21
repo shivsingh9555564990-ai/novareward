@@ -2,132 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CoinBazaar Design System — Vibrant + Gamified
+/* NovaReward — 2090 Futuristic Design System
+   Deep cosmic dark base + neon violet/cyan/magenta accents.
    All colors MUST be HSL. */
 
 @layer base {
   :root {
-    --background: 270 30% 98%;
-    --foreground: 260 25% 12%;
+    /* Cosmic dark base */
+    --background: 250 45% 6%;
+    --foreground: 270 30% 96%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 260 25% 12%;
+    --card: 255 40% 10%;
+    --card-foreground: 270 30% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 260 25% 12%;
+    --popover: 255 40% 10%;
+    --popover-foreground: 270 30% 96%;
 
-    /* Brand purple */
-    --primary: 270 85% 55%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 285 90% 70%;
+    /* Neon violet (Nova brand) */
+    --primary: 270 95% 65%;
+    --primary-foreground: 250 50% 8%;
+    --primary-glow: 285 100% 72%;
 
-    /* Coin / accent orange-gold */
-    --secondary: 28 100% 60%;
+    /* Neon magenta */
+    --secondary: 320 100% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 270 20% 95%;
-    --muted-foreground: 260 10% 45%;
+    --muted: 255 30% 14%;
+    --muted-foreground: 270 20% 70%;
 
-    --accent: 285 90% 70%;
-    --accent-foreground: 0 0% 100%;
+    /* Cyan accent */
+    --accent: 190 100% 60%;
+    --accent-foreground: 250 50% 8%;
 
-    /* Coin gold */
-    --coin: 42 100% 55%;
-    --coin-foreground: 30 80% 15%;
+    /* Coin neon gold */
+    --coin: 45 100% 60%;
+    --coin-foreground: 30 80% 12%;
 
-    /* Success green */
-    --success: 152 75% 45%;
+    /* Reward green (logo green) */
+    --success: 152 80% 50%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 85% 60%;
+    --destructive: 350 95% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 270 20% 90%;
-    --input: 270 20% 92%;
-    --ring: 270 85% 55%;
+    --border: 270 50% 22%;
+    --input: 255 35% 14%;
+    --ring: 270 95% 65%;
 
-    --radius: 1rem;
+    --radius: 1.25rem;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(270 85% 55%) 0%, hsl(285 90% 70%) 100%);
-    --gradient-coin: linear-gradient(135deg, hsl(42 100% 55%) 0%, hsl(28 100% 60%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(270 85% 55%) 0%, hsl(28 100% 60%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(270 30% 98%) 100%);
-    --gradient-success: linear-gradient(135deg, hsl(152 75% 45%) 0%, hsl(170 80% 50%) 100%);
-    --gradient-bg: linear-gradient(180deg, hsl(270 100% 97%) 0%, hsl(28 100% 96%) 100%);
+    /* Futuristic gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 95% 60%) 0%, hsl(285 100% 72%) 50%, hsl(320 100% 65%) 100%);
+    --gradient-coin: linear-gradient(135deg, hsl(45 100% 60%) 0%, hsl(28 100% 60%) 100%);
+    --gradient-hero: radial-gradient(ellipse at top, hsl(270 80% 22%) 0%, hsl(250 50% 6%) 60%);
+    --gradient-card: linear-gradient(180deg, hsl(255 40% 12% / 0.9) 0%, hsl(255 40% 8% / 0.9) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(152 80% 50%) 0%, hsl(170 90% 55%) 100%);
+    --gradient-bg: radial-gradient(ellipse at top, hsl(270 60% 18%) 0%, hsl(250 50% 6%) 70%);
+    --gradient-neon: linear-gradient(90deg, hsl(190 100% 60%), hsl(270 95% 65%), hsl(320 100% 65%));
 
-    /* Shadows */
-    --shadow-glow: 0 10px 40px -10px hsl(270 85% 55% / 0.4);
-    --shadow-coin: 0 8px 24px -6px hsl(42 100% 55% / 0.5);
-    --shadow-soft: 0 4px 20px -4px hsl(270 30% 30% / 0.1);
-    --shadow-elevated: 0 12px 32px -8px hsl(270 50% 30% / 0.15);
+    /* Neon shadows / glows */
+    --shadow-glow: 0 0 40px hsl(270 95% 65% / 0.55), 0 0 80px hsl(285 100% 72% / 0.25);
+    --shadow-neon: 0 0 24px hsl(190 100% 60% / 0.6);
+    --shadow-coin: 0 0 28px hsl(45 100% 60% / 0.55);
+    --shadow-soft: 0 8px 32px -8px hsl(270 95% 50% / 0.35);
+    --shadow-elevated: 0 20px 60px -12px hsl(270 95% 40% / 0.5);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 270 85% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 20% 95%;
-    --sidebar-accent-foreground: 270 85% 25%;
-    --sidebar-border: 270 20% 90%;
-    --sidebar-ring: 270 85% 55%;
+    --sidebar-background: 255 40% 8%;
+    --sidebar-foreground: 270 30% 90%;
+    --sidebar-primary: 270 95% 65%;
+    --sidebar-primary-foreground: 250 50% 8%;
+    --sidebar-accent: 255 30% 14%;
+    --sidebar-accent-foreground: 270 30% 96%;
+    --sidebar-border: 270 50% 22%;
+    --sidebar-ring: 270 95% 65%;
   }
 
+  /* Single dark-by-default theme — kept .dark identical for safety */
   .dark {
-    --background: 260 30% 8%;
-    --foreground: 270 20% 95%;
-
-    --card: 260 25% 12%;
-    --card-foreground: 270 20% 95%;
-
-    --popover: 260 25% 12%;
-    --popover-foreground: 270 20% 95%;
-
-    --primary: 285 90% 70%;
-    --primary-foreground: 260 30% 10%;
-    --primary-glow: 270 85% 65%;
-
-    --secondary: 28 100% 60%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 260 20% 18%;
-    --muted-foreground: 270 15% 65%;
-
-    --accent: 285 90% 70%;
-    --accent-foreground: 260 30% 10%;
-
-    --coin: 42 100% 60%;
-    --coin-foreground: 30 80% 15%;
-
-    --success: 152 75% 50%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 260 20% 22%;
-    --input: 260 20% 18%;
-    --ring: 285 90% 70%;
-
-    --gradient-primary: linear-gradient(135deg, hsl(270 85% 55%) 0%, hsl(285 90% 70%) 100%);
-    --gradient-bg: linear-gradient(180deg, hsl(260 30% 8%) 0%, hsl(280 30% 12%) 100%);
+    --background: 250 45% 6%;
+    --foreground: 270 30% 96%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  html, body, #root {
-    @apply h-full;
-  }
+  * { @apply border-border; }
+  html, body, #root { @apply h-full; }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 20% 10%, hsl(270 80% 30% / 0.35) 0%, transparent 45%),
+      radial-gradient(circle at 80% 90%, hsl(320 80% 35% / 0.3) 0%, transparent 45%),
+      linear-gradient(180deg, hsl(250 45% 6%) 0%, hsl(255 50% 4%) 100%);
+    background-attachment: fixed;
   }
 }
 
@@ -138,7 +110,9 @@
   .bg-gradient-card { background: var(--gradient-card); }
   .bg-gradient-success { background: var(--gradient-success); }
   .bg-gradient-bg { background: var(--gradient-bg); }
+  .bg-gradient-neon { background: var(--gradient-neon); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-neon { box-shadow: var(--shadow-neon); }
   .shadow-coin { box-shadow: var(--shadow-coin); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-elevated { box-shadow: var(--shadow-elevated); }
@@ -150,11 +124,36 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+  .text-gradient-neon {
+    background: var(--gradient-neon);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
   .text-gradient-coin {
     background: var(--gradient-coin);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  /* Glassmorphism card */
+  .glass {
+    background: linear-gradient(180deg, hsl(270 50% 18% / 0.5), hsl(255 40% 8% / 0.55));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(270 60% 60% / 0.2);
+  }
+  /* Neon outline */
+  .neon-border {
+    border: 1px solid hsl(270 95% 65% / 0.5);
+    box-shadow: inset 0 0 20px hsl(270 95% 65% / 0.15), 0 0 20px hsl(270 95% 65% / 0.25);
+  }
+  /* Holographic grid */
+  .grid-bg {
+    background-image:
+      linear-gradient(hsl(270 95% 65% / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(270 95% 65% / 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }
 
@@ -169,24 +168,39 @@
   100% { transform: rotateY(360deg) scale(1); }
 }
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.4); }
-  50% { box-shadow: 0 0 40px hsl(var(--primary) / 0.7); }
+  0%, 100% { box-shadow: 0 0 30px hsl(var(--primary) / 0.5), 0 0 60px hsl(var(--primary) / 0.25); }
+  50% { box-shadow: 0 0 60px hsl(var(--primary) / 0.8), 0 0 120px hsl(var(--primary) / 0.4); }
 }
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes scale-in {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.85); }
   to { opacity: 1; transform: scale(1); }
 }
 @keyframes shimmer {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+}
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+@keyframes neon-pulse {
+  0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.6)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 20px hsl(var(--primary) / 1)); }
+}
 
 .animate-float { animation: float 3s ease-in-out infinite; }
 .animate-coin-spin { animation: coin-spin 2s ease-in-out infinite; }
-.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
 .animate-slide-up { animation: slide-up 0.5s ease-out both; }
-.animate-scale-in { animation: scale-in 0.4s ease-out both; }
+.animate-scale-in { animation: scale-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-orbit { animation: orbit 8s linear infinite; }
+.animate-scan { animation: scan-line 3s linear infinite; }
+.animate-neon-pulse { animation: neon-pulse 2s ease-in-out infinite; }

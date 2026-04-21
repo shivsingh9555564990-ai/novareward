@@ -202,10 +202,7 @@ const Home = () => {
             </button>
             <button
               aria-label="Notifications"
-              onClick={() => {
-                setUnread(0);
-                toast("Notifications coming soon");
-              }}
+              onClick={() => navigate("/notifications")}
               className="relative h-10 w-10 rounded-2xl glass flex items-center justify-center"
             >
               <Bell className="w-4 h-4" />
@@ -406,65 +403,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Top earners */}
-        <section className="animate-slide-up" style={{ animationDelay: "300ms" }}>
-          <SectionHeader
-            title="Top Earners · This week"
-            subtitle="Climb the ranks"
-            action={
-              <button
-                onClick={() => toast("Leaderboard coming soon")}
-                className="text-xs font-semibold text-primary flex items-center gap-1"
-              >
-                <Trophy className="w-3.5 h-3.5" /> Full board
-              </button>
-            }
-          />
-          <div className="rounded-3xl glass p-2 divide-y divide-primary/10">
-            {TOP_EARNERS.map((u) => {
-              const Icon = u.rank === 1 ? Crown : u.rank === 2 ? Medal : Trophy;
-              const tint =
-                u.rank === 1
-                  ? "text-coin"
-                  : u.rank === 2
-                    ? "text-accent"
-                    : "text-secondary";
-              return (
-                <div key={u.rank} className="flex items-center gap-3 p-3">
-                  <div className={cn("h-9 w-9 rounded-xl bg-muted flex items-center justify-center", tint)}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="h-9 w-9 rounded-full bg-gradient-primary p-[2px]">
-                    <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-base">
-                      {u.avatar}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold leading-tight">{u.name}</p>
-                    <p className="text-[11px] text-muted-foreground">Rank #{u.rank}</p>
-                  </div>
-                  <p className="text-coin font-extrabold text-sm flex items-center gap-1">
-                    <Coins className="w-3.5 h-3.5" /> {u.coins.toLocaleString()}
-                  </p>
-                </div>
-              );
-            })}
-            <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-2xl mt-1">
-              <div className="h-9 w-9 rounded-xl bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
-                #—
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold leading-tight">You</p>
-                <p className="text-[11px] text-muted-foreground">
-                  Earn more to enter the board
-                </p>
-              </div>
-              <p className="text-primary font-extrabold text-sm flex items-center gap-1">
-                <Coins className="w-3.5 h-3.5" /> {profile?.coins ?? 0}
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
 
       <BottomNav />

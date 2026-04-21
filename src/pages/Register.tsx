@@ -36,12 +36,20 @@ const Register = () => {
     });
     setLoading(false);
     if (error) {
-      if (error.message.toLowerCase().includes("already")) {
-        toast.error("यह email पहले से registered है। Login करें।");
-        navigate("/login", { replace: true });
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already") || msg.includes("registered") || msg.includes("exists")) {
+        toast.error("⚠️ यह email पहले से registered है। नया confirmation email नहीं भेजा जाएगा — सीधे Login करें।", { duration: 7000 });
+        setTimeout(() => navigate("/login", { replace: true }), 1200);
         return;
       }
       toast.error(error.message);
+      return;
+    }
+    // Supabase returns a fake user object (identities: []) when email already exists
+    // to prevent email enumeration. Detect and redirect to login instead of re-sending.
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      toast.error("⚠️ यह email पहले से registered है। Confirmation email दोबारा नहीं भेजा गया — सीधे Login करें।", { duration: 7000 });
+      setTimeout(() => navigate("/login", { replace: true }), 1200);
       return;
     }
     // If email confirmation required, no session is returned

@@ -39,7 +39,7 @@ export const AuthLayout = ({ children, title, subtitle, showLogo = true, back }:
             <div className="flex flex-col leading-none">
               <span className="text-xl font-extrabold">
                 <span className="text-foreground">Nova</span>
-                <span className="text-success">Reward</span>
+                <span className="text-success">Rewards</span>
               </span>
               <span className="text-[10px] text-primary/70 font-mono tracking-widest">// v3.0</span>
             </div>

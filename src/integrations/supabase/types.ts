@@ -44,6 +44,72 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_card_brands: {
+        Row: {
+          category: string
+          color: string | null
+          created_at: string
+          delivery_methods: string[]
+          denominations: number[]
+          description: string | null
+          emoji: string | null
+          id: string
+          in_stock: boolean
+          is_active: boolean
+          is_popular: boolean
+          logo_url: string | null
+          max_inr: number
+          min_inr: number
+          name: string
+          slug: string
+          sort_order: number
+          terms: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          color?: string | null
+          created_at?: string
+          delivery_methods?: string[]
+          denominations?: number[]
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          in_stock?: boolean
+          is_active?: boolean
+          is_popular?: boolean
+          logo_url?: string | null
+          max_inr?: number
+          min_inr?: number
+          name: string
+          slug: string
+          sort_order?: number
+          terms?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color?: string | null
+          created_at?: string
+          delivery_methods?: string[]
+          denominations?: number[]
+          description?: string | null
+          emoji?: string | null
+          id?: string
+          in_stock?: boolean
+          is_active?: boolean
+          is_popular?: boolean
+          logo_url?: string | null
+          max_inr?: number
+          min_inr?: number
+          name?: string
+          slug?: string
+          sort_order?: number
+          terms?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -74,6 +140,122 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      offer_completions: {
+        Row: {
+          created_at: string
+          id: string
+          offer_id: string
+          proof: Json | null
+          reward_credited: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          offer_id: string
+          proof?: Json | null
+          reward_credited?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          offer_id?: string
+          proof?: Json | null
+          reward_credited?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_completions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          category: string | null
+          completion_rate: number | null
+          created_at: string
+          cta_url: string | null
+          description: string | null
+          difficulty: number | null
+          duration_min: number | null
+          external_id: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          is_free: boolean
+          kind: string
+          provider: string
+          requirements: Json | null
+          reward_max: number
+          reward_min: number
+          sort_order: number
+          steps: Json | null
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          completion_rate?: number | null
+          created_at?: string
+          cta_url?: string | null
+          description?: string | null
+          difficulty?: number | null
+          duration_min?: number | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_free?: boolean
+          kind: string
+          provider?: string
+          requirements?: Json | null
+          reward_max?: number
+          reward_min?: number
+          sort_order?: number
+          steps?: Json | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          completion_rate?: number | null
+          created_at?: string
+          cta_url?: string | null
+          description?: string | null
+          difficulty?: number | null
+          duration_min?: number | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          is_free?: boolean
+          kind?: string
+          provider?: string
+          requirements?: Json | null
+          reward_max?: number
+          reward_min?: number
+          sort_order?: number
+          steps?: Json | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -113,12 +295,81 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_attempts: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          reward: number
+          score: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          reward?: number
+          score?: number
+          total?: number
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          reward?: number
+          score?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          category: string
+          correct_index: number
+          created_at: string
+          difficulty: number
+          explanation: string | null
+          id: string
+          is_active: boolean
+          options: Json
+          question: string
+        }
+        Insert: {
+          category: string
+          correct_index: number
+          created_at?: string
+          difficulty?: number
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          options: Json
+          question: string
+        }
+        Update: {
+          category?: string
+          correct_index?: number
+          created_at?: string
+          difficulty?: number
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          options?: Json
+          question?: string
+        }
+        Relationships: []
+      }
       redemptions: {
         Row: {
           amount_inr: number
           brand: string | null
           coins_spent: number
           created_at: string
+          delivered_at: string | null
+          delivery_method: string
+          expires_at: string | null
           id: string
           meta: Json | null
           status: string
@@ -126,12 +377,17 @@ export type Database = {
           updated_at: string
           upi_id: string | null
           user_id: string
+          voucher_code: string | null
+          voucher_pin: string | null
         }
         Insert: {
           amount_inr: number
           brand?: string | null
           coins_spent: number
           created_at?: string
+          delivered_at?: string | null
+          delivery_method?: string
+          expires_at?: string | null
           id?: string
           meta?: Json | null
           status?: string
@@ -139,12 +395,17 @@ export type Database = {
           updated_at?: string
           upi_id?: string | null
           user_id: string
+          voucher_code?: string | null
+          voucher_pin?: string | null
         }
         Update: {
           amount_inr?: number
           brand?: string | null
           coins_spent?: number
           created_at?: string
+          delivered_at?: string | null
+          delivery_method?: string
+          expires_at?: string | null
           id?: string
           meta?: Json | null
           status?: string
@@ -152,6 +413,8 @@ export type Database = {
           updated_at?: string
           upi_id?: string | null
           user_id?: string
+          voucher_code?: string | null
+          voucher_pin?: string | null
         }
         Relationships: []
       }
@@ -191,6 +454,48 @@ export type Database = {
         }
         Relationships: []
       }
+      voucher_codes: {
+        Row: {
+          amount_inr: number
+          assigned_user_id: string | null
+          brand_slug: string
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_used: boolean
+          pin: string | null
+          redemption_id: string | null
+          used_at: string | null
+        }
+        Insert: {
+          amount_inr: number
+          assigned_user_id?: string | null
+          brand_slug: string
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_used?: boolean
+          pin?: string | null
+          redemption_id?: string | null
+          used_at?: string | null
+        }
+        Update: {
+          amount_inr?: number
+          assigned_user_id?: string | null
+          brand_slug?: string
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_used?: boolean
+          pin?: string | null
+          redemption_id?: string | null
+          used_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -198,6 +503,10 @@ export type Database = {
     Functions: {
       claim_daily_activity: {
         Args: { p_activity: string; p_meta?: Json; p_reward: number }
+        Returns: Json
+      }
+      complete_quiz: {
+        Args: { p_category?: string; p_score: number; p_total?: number }
         Returns: Json
       }
       create_redemption: {

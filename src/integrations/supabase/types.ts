@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_activity: {
+        Row: {
+          activity: string
+          activity_date: string
+          created_at: string
+          id: string
+          meta: Json | null
+          reward: number
+          user_id: string
+        }
+        Insert: {
+          activity: string
+          activity_date?: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          reward?: number
+          user_id: string
+        }
+        Update: {
+          activity?: string
+          activity_date?: string
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          reward?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          meta: Json | null
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          read_at?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -50,12 +113,62 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          meta: Json | null
+          reference_id: string | null
+          source: string | null
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          reference_id?: string | null
+          source?: string | null
+          status?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          reference_id?: string | null
+          source?: string | null
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_daily_activity: {
+        Args: { p_activity: string; p_meta?: Json; p_reward: number }
+        Returns: Json
+      }
+      credit_user_coins: {
+        Args: {
+          p_amount: number
+          p_meta?: Json
+          p_reference_id: string
+          p_source: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

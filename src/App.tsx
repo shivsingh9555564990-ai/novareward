@@ -14,6 +14,10 @@ import ResetPassword from "./pages/ResetPassword";
 import ProfileSetup from "./pages/ProfileSetup";
 import Interests from "./pages/Interests";
 import Home from "./pages/Home";
+import Earn from "./pages/Earn";
+import Wallet from "./pages/Wallet";
+import Redeem from "./pages/Redeem";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +40,10 @@ const App = () => (
             <Route path="/profile-setup" element={<ProfileSetup />} />
             <Route path="/interests" element={<Interests />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/earn" element={<Earn />} />
+            <Route path="/wallet" element={<Wallet />} />
+            <Route path="/redeem" element={<Redeem />} />
+            <Route path="/profile" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

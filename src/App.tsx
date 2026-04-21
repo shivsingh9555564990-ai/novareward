@@ -15,6 +15,8 @@ import ProfileSetup from "./pages/ProfileSetup";
 import Interests from "./pages/Interests";
 import Home from "./pages/Home";
 import Earn from "./pages/Earn";
+import SpinWheel from "./pages/SpinWheel";
+import ScratchCard from "./pages/ScratchCard";
 import Wallet from "./pages/Wallet";
 import Redeem from "./pages/Redeem";
 import Profile from "./pages/Profile";
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/interests" element={<Interests />} />
             <Route path="/home" element={<Home />} />
             <Route path="/earn" element={<Earn />} />
+            <Route path="/spin" element={<SpinWheel />} />
+            <Route path="/scratch" element={<ScratchCard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/redeem" element={<Redeem />} />
             <Route path="/profile" element={<Profile />} />

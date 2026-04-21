@@ -20,6 +20,9 @@ import ScratchCard from "./pages/ScratchCard";
 import Wallet from "./pages/Wallet";
 import Redeem from "./pages/Redeem";
 import Profile from "./pages/Profile";
+import Transactions from "./pages/Transactions";
+import Notifications from "./pages/Notifications";
+import Leaderboard from "./pages/Leaderboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +51,9 @@ const App = () => (
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/redeem" element={<Redeem />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

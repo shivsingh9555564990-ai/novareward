@@ -246,7 +246,7 @@ const Home = () => {
                 <p className="text-primary-foreground/80 text-xs uppercase tracking-[0.2em]">
                   Nova Wallet
                 </p>
-                <img src={novaLogo} alt="NovaReward" className="h-6 w-6 opacity-90" />
+                <img src={novaLogo} alt="NovaRewards" className="h-6 w-6 opacity-90" />
               </div>
 
               <div className="flex items-baseline gap-2 mb-1">

@@ -50,7 +50,7 @@ const Earn = () => {
       <header className="relative overflow-hidden">
         <img
           src={earnHero}
-          alt="NovaReward earning hub holographic coins"
+          alt="NovaRewards earning hub holographic coins"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
           width={1280}
           height={768}

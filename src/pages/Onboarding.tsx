@@ -36,7 +36,7 @@ const Onboarding = () => {
   const isLast = index === slides.length - 1;
 
   const finish = () => {
-    localStorage.setItem("coinbazaar-onboarded", "1");
+    localStorage.setItem("novarewards-onboarded", "1");
     navigate("/register", { replace: true });
   };
 

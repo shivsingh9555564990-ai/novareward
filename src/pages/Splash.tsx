@@ -10,7 +10,7 @@ const Splash = () => {
   useEffect(() => {
     const t = setTimeout(() => {
       if (loading) return;
-      const seenOnboarding = localStorage.getItem("novareward-onboarded");
+      const seenOnboarding = localStorage.getItem("novarewards-onboarded");
       if (user) navigate("/home", { replace: true });
       else if (seenOnboarding) navigate("/login", { replace: true });
       else navigate("/onboarding", { replace: true });
@@ -52,7 +52,7 @@ const Splash = () => {
 
           <img
             src={novaLogo}
-            alt="NovaReward logo"
+            alt="NovaRewards logo"
             width={160}
             height={160}
             className="w-40 h-40 rounded-3xl shadow-glow animate-pulse-glow relative z-10"

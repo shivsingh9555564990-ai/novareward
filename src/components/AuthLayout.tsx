@@ -31,7 +31,7 @@ export const AuthLayout = ({ children, title, subtitle, showLogo = true, back }:
           <div className="flex items-center gap-3 mb-8 animate-slide-up">
             <img
               src={novaLogo}
-              alt="NovaReward"
+              alt="NovaRewards"
               width={44}
               height={44}
               className="w-11 h-11 rounded-2xl shadow-glow"

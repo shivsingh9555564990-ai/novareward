@@ -62,7 +62,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [online, setOnline] = useState(navigator.onLine);
   const [featuredIdx, setFeaturedIdx] = useState(0);
-  const [unread, setUnread] = useState(2);
+  const [unread, setUnread] = useState(0);
 
   const greeting = useMemo(() => getGreeting(), []);
   const animatedCoins = useCountUp(profile?.coins ?? 0);
@@ -85,6 +85,29 @@ const Home = () => {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  // Real notifications unread count + realtime
+  useEffect(() => {
+    if (!user) return;
+    const loadUnread = async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .is("read_at", null);
+      setUnread(count ?? 0);
+    };
+    loadUnread();
+    const ch = supabase
+      .channel("home-notif")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        loadUnread
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user]);
 
   // Featured task rotation
   useEffect(() => {

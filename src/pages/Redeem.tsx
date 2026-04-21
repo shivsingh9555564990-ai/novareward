@@ -21,7 +21,7 @@ const Redeem = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("browse");
-  const [tab, setTab] = useState<"giftcards" | "upi">("giftcards");
+  const [tab, setTab] = useState<"giftcard" | "upi">("giftcard");
   const [category, setCategory] = useState<string>("All");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<GiftCardBrand | null>(null);
@@ -294,10 +294,10 @@ const Redeem = () => {
       <div className="relative z-10 -mt-2 px-5">
         <div className="glass grid grid-cols-2 gap-1 rounded-2xl p-1">
           {[
-            { k: "giftcards", label: `Gift Cards · ${GIFT_CARDS.length}+` },
-            { k: "upi", label: "UPI Cash" },
+            { k: "giftcard" as const, label: `Gift Cards · ${GIFT_CARDS.length}+` },
+            { k: "upi" as const, label: "UPI Cash" },
           ].map((t) => (
-            <button key={t.k} onClick={() => { setTab(t.k as any); if (t.k === "upi") setMode("upi"); }}
+            <button key={t.k} onClick={() => { setTab(t.k); if (t.k === "upi") setMode("upi"); }}
               className={cn("rounded-xl py-2.5 text-xs font-bold transition-smooth",
                 tab === t.k ? "bg-gradient-primary text-primary-foreground shadow-glow" : "text-muted-foreground")}>
               {t.label}

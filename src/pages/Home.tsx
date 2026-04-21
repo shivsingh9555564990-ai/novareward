@@ -44,10 +44,10 @@ const FEATURED_TASKS = [
 ];
 
 const EARNING_OPTIONS = [
-  { key: "survey", label: "Surveys", icon: ClipboardList, badge: 24, color: "from-violet-500 to-fuchsia-500", route: "/earn" },
-  { key: "task", label: "Tasks", icon: Sparkles, badge: 12, color: "from-cyan-400 to-violet-500", route: "/earn" },
-  { key: "game", label: "Games", icon: Gamepad2, badge: 6, color: "from-pink-500 to-rose-500", route: "/earn" },
-  { key: "bonus", label: "Daily Bonus", icon: Gift, badge: 1, color: "from-amber-400 to-orange-500", route: "/earn" },
+  { key: "survey", label: "Surveys", img: iconSurvey, badge: 24, color: "from-violet-500 to-fuchsia-500", route: "/earn" },
+  { key: "task", label: "Tasks", img: iconBonus, badge: 12, color: "from-cyan-400 to-violet-500", route: "/earn" },
+  { key: "game", label: "Games", img: iconGames, badge: 6, color: "from-pink-500 to-rose-500", route: "/earn" },
+  { key: "bonus", label: "Daily Bonus", img: iconBonus, badge: 1, color: "from-amber-400 to-orange-500", route: "/earn" },
 ] as const;
 
 const RECOMMENDED = [
@@ -254,7 +254,7 @@ const Home = () => {
               </div>
 
               <div className="flex items-baseline gap-2 mb-1">
-                <Coins className="w-7 h-7 text-coin animate-coin-spin drop-shadow-[0_0_8px_hsl(var(--coin))]" />
+                <img src={iconCoin} alt="Coin" className="w-8 h-8 drop-shadow-[0_0_12px_hsl(var(--coin))]" width={32} height={32} />
                 <span className="text-5xl font-extrabold text-primary-foreground tracking-tight tabular-nums">
                   {animatedCoins.toLocaleString()}
                 </span>
@@ -360,11 +360,11 @@ const Home = () => {
               >
                 <div
                   className={cn(
-                    "h-11 w-11 rounded-xl bg-gradient-to-br flex items-center justify-center mb-3 shadow-soft",
+                    "h-14 w-14 rounded-xl bg-gradient-to-br flex items-center justify-center mb-3 shadow-soft p-1.5",
                     opt.color
                   )}
                 >
-                  <opt.icon className="w-5 h-5 text-white" />
+                  <img src={opt.img} alt={opt.label} className="h-full w-full object-contain drop-shadow-[0_0_8px_hsl(var(--primary)/0.6)]" loading="lazy" width={56} height={56} />
                 </div>
                 <p className="font-bold text-sm">{opt.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">

@@ -22,11 +22,20 @@ const Login = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("email not confirmed") || msg.includes("not confirmed")) {
+        toast.error("⚠️ Email verify नहीं हुआ। अपना inbox check करके confirmation link पर click करें।", { duration: 7000 });
+        return;
+      }
+      if (msg.includes("invalid")) {
+        toast.error("❌ गलत email या password। अगर अभी signup किया है तो पहले email verify करें।", { duration: 6000 });
+        return;
+      }
       toast.error(error.message);
       return;
     }
     toast.success("Welcome back! 🎉");
-    navigate("/home", { replace: true });
+    navigate("/profile-setup", { replace: true });
   };
 
   const handleGoogle = async () => {

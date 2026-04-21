@@ -26,19 +26,33 @@ const Register = () => {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/home`,
+        emailRedirectTo: `${window.location.origin}/profile-setup`,
         data: { full_name: name },
       },
     });
     setLoading(false);
     if (error) {
+      if (error.message.toLowerCase().includes("already")) {
+        toast.error("यह email पहले से registered है। Login करें।");
+        navigate("/login", { replace: true });
+        return;
+      }
       toast.error(error.message);
       return;
     }
+    // If email confirmation required, no session is returned
+    if (!data.session) {
+      toast.success("✅ Confirmation link आपके email पर भेज दिया गया है। Email check करके verify करें, फिर login करें।", {
+        duration: 8000,
+      });
+      navigate("/login", { replace: true });
+      return;
+    }
+    // Auto-confirmed (rare case)
     toast.success("Account बन गया! 🎉");
     navigate("/profile-setup", { replace: true });
   };
@@ -49,9 +63,10 @@ const Register = () => {
       toast.error("सही phone number डालें");
       return;
     }
-    // Phone OTP requires SMS provider — UI only for now
-    toast.info("Phone OTP के लिए SMS provider connect करना होगा। अभी email use करें।");
-    navigate(`/verify-otp?phone=${encodeURIComponent(phone)}`);
+    toast.error(
+      "📱 Phone OTP अभी available नहीं है। SMS provider (Twilio/MSG91) configure करना होगा। कृपया Email signup use करें।",
+      { duration: 7000 }
+    );
   };
 
   const handleGoogle = async () => {

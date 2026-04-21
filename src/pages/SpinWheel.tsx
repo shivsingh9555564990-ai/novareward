@@ -6,17 +6,16 @@ import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { getDeviceFp } from "@/lib/deviceFp";
+import iconSpin from "@/assets/icon-spin.png";
 
-// Weighted reward segments (sum of weights = 100)
+// Spin reward: 1-5 NC (server-enforced max 5)
 const SEGMENTS = [
-  { reward: 10, weight: 30, color: "hsl(190 100% 60%)" },
-  { reward: 25, weight: 22, color: "hsl(270 95% 65%)" },
-  { reward: 50, weight: 18, color: "hsl(320 100% 65%)" },
-  { reward: 75, weight: 12, color: "hsl(45 100% 60%)" },
-  { reward: 100, weight: 9, color: "hsl(152 80% 50%)" },
-  { reward: 200, weight: 6, color: "hsl(190 100% 60%)" },
-  { reward: 350, weight: 2, color: "hsl(285 100% 72%)" },
-  { reward: 500, weight: 1, color: "hsl(45 100% 60%)" },
+  { reward: 1, weight: 35, color: "hsl(190 100% 60%)" },
+  { reward: 2, weight: 28, color: "hsl(270 95% 65%)" },
+  { reward: 3, weight: 20, color: "hsl(320 100% 65%)" },
+  { reward: 4, weight: 12, color: "hsl(45 100% 60%)" },
+  { reward: 5, weight: 5,  color: "hsl(152 80% 50%)" },
 ];
 
 const pickReward = () => {
@@ -63,16 +62,15 @@ const SpinWheel = () => {
     const idx = pickReward();
     const reward = SEGMENTS[idx].reward;
 
-    // pointer is at top — rotate so chosen segment lands at top
     const targetMid = idx * segmentAngle + segmentAngle / 2;
-    const final = 360 * 6 + (360 - targetMid); // 6 full spins
+    const final = 360 * 6 + (360 - targetMid);
     setRotation((prev) => prev + final - (prev % 360));
 
     setTimeout(async () => {
       const { data, error } = await supabase.rpc("claim_daily_activity", {
         p_activity: "spin",
         p_reward: reward,
-        p_meta: { segment: idx },
+        p_meta: { segment: idx, device_fp: getDeviceFp() },
       });
       setSpinning(false);
       lockRef.current = false;
@@ -83,7 +81,12 @@ const SpinWheel = () => {
       }
       const res = data as { success: boolean; error?: string; reward?: number };
       if (!res?.success) {
-        toast.error(res?.error === "already_claimed_today" ? "Already spun today" : "Spin failed");
+        const msg: Record<string, string> = {
+          already_claimed_today: "Already spun today",
+          device_limit_reached: "This device already claimed today",
+          reward_out_of_range: "Invalid reward",
+        };
+        toast.error(msg[res?.error || ""] || "Spin failed");
         setClaimedToday(true);
         return;
       }
@@ -94,18 +97,11 @@ const SpinWheel = () => {
   };
 
   const segments = useMemo(
-    () =>
-      SEGMENTS.map((s, i) => {
-        const start = i * segmentAngle;
-        return { ...s, start };
-      }),
+    () => SEGMENTS.map((s, i) => ({ ...s, start: i * segmentAngle })),
     [segmentAngle]
   );
 
-  // SVG paths for wheel slices
-  const cx = 150;
-  const cy = 150;
-  const r = 140;
+  const cx = 150, cy = 150, r = 140;
   const polarToCart = (angleDeg: number) => {
     const a = ((angleDeg - 90) * Math.PI) / 180;
     return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
@@ -117,6 +113,7 @@ const SpinWheel = () => {
         <Link to="/earn" className="rounded-full bg-muted/60 p-2 backdrop-blur" aria-label="Back">
           <ArrowLeft className="h-5 w-5" />
         </Link>
+        <img src={iconSpin} alt="Spin" className="h-8 w-8" width={32} height={32} />
         <h1 className="text-xl font-extrabold">Spin Wheel</h1>
         <span className="ml-auto rounded-full bg-accent/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-accent">
           Daily
@@ -124,19 +121,16 @@ const SpinWheel = () => {
       </header>
 
       <p className="mt-2 px-5 text-sm text-muted-foreground">
-        Spin once every 24 hours. Rewards credited instantly to your Nova wallet.
+        Spin once daily. Win 1–5 Nova Coins, credited instantly.
       </p>
 
-      {/* Wheel */}
       <div className="relative mt-8 flex items-center justify-center">
         <div className="absolute h-72 w-72 rounded-full bg-primary/30 blur-3xl animate-pulse-glow" />
         <div className="relative">
-          {/* Pointer */}
           <div
             className="absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-2"
             style={{
-              width: 0,
-              height: 0,
+              width: 0, height: 0,
               borderLeft: "12px solid transparent",
               borderRight: "12px solid transparent",
               borderTop: "22px solid hsl(var(--primary))",
@@ -144,9 +138,7 @@ const SpinWheel = () => {
             }}
           />
           <svg
-            viewBox="0 0 300 300"
-            width={300}
-            height={300}
+            viewBox="0 0 300 300" width={300} height={300}
             className="relative z-10 transition-transform"
             style={{
               transform: `rotate(${rotation}deg)`,
@@ -168,23 +160,15 @@ const SpinWheel = () => {
               const largeArc = segmentAngle > 180 ? 1 : 0;
               const path = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
               const labelAngle = s.start + segmentAngle / 2;
-              const [lx, ly] = (() => {
-                const a = ((labelAngle - 90) * Math.PI) / 180;
-                return [cx + r * 0.65 * Math.cos(a), cy + r * 0.65 * Math.sin(a)];
-              })();
+              const a2 = ((labelAngle - 90) * Math.PI) / 180;
+              const lx = cx + r * 0.65 * Math.cos(a2);
+              const ly = cy + r * 0.65 * Math.sin(a2);
               return (
                 <g key={i}>
                   <path d={path} fill={s.color} fillOpacity={0.85} stroke="hsl(250 45% 6%)" strokeWidth={1.5} />
-                  <text
-                    x={lx}
-                    y={ly}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize="16"
-                    fontWeight="800"
-                    fill="hsl(250 50% 8%)"
-                    transform={`rotate(${labelAngle} ${lx} ${ly})`}
-                  >
+                  <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
+                    fontSize="18" fontWeight="800" fill="hsl(250 50% 8%)"
+                    transform={`rotate(${labelAngle} ${lx} ${ly})`}>
                     +{s.reward}
                   </text>
                 </g>
@@ -196,7 +180,6 @@ const SpinWheel = () => {
         </div>
       </div>
 
-      {/* Action */}
       <div className="mt-10 px-5">
         {result !== null && (
           <div className="glass mb-4 rounded-2xl p-4 text-center animate-scale-in">
@@ -204,13 +187,7 @@ const SpinWheel = () => {
             <p className="mt-1 text-3xl font-extrabold text-gradient-coin">+{result} NC</p>
           </div>
         )}
-        <Button
-          variant="hero"
-          size="xl"
-          className="w-full"
-          onClick={handleSpin}
-          disabled={spinning || claimedToday}
-        >
+        <Button variant="hero" size="xl" className="w-full" onClick={handleSpin} disabled={spinning || claimedToday}>
           <Sparkles className="h-5 w-5" />
           {claimedToday ? "Come back tomorrow" : spinning ? "Spinning…" : "Spin Now"}
         </Button>
@@ -219,15 +196,9 @@ const SpinWheel = () => {
         </Button>
       </div>
 
-      {/* Info chips */}
       <div className="mt-6 flex flex-wrap justify-center gap-2 px-5">
-        {["Server-validated", "Anti-fraud", "Instant credit"].map((t) => (
-          <span
-            key={t}
-            className={cn(
-              "rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary"
-            )}
-          >
+        {["Server-validated", "Anti-fraud", "Max 5 NC"].map((t) => (
+          <span key={t} className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
             {t}
           </span>
         ))}

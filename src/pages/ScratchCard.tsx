@@ -5,15 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
 import { toast } from "sonner";
+import { getDeviceFp } from "@/lib/deviceFp";
+import iconScratch from "@/assets/icon-scratch.png";
 
+// Scratch reward: 1-3 NC (server-enforced max 3)
 const REWARDS = [
-  { reward: 20, weight: 32 },
-  { reward: 40, weight: 24 },
-  { reward: 60, weight: 18 },
-  { reward: 100, weight: 12 },
-  { reward: 150, weight: 8 },
-  { reward: 250, weight: 4 },
-  { reward: 300, weight: 2 },
+  { reward: 1, weight: 50 },
+  { reward: 2, weight: 35 },
+  { reward: 3, weight: 15 },
 ];
 const pickReward = () => {
   const total = REWARDS.reduce((s, x) => s + x.weight, 0);
@@ -54,7 +53,6 @@ const ScratchCard = () => {
     })();
   }, []);
 
-  // Init scratch overlay
   useEffect(() => {
     if (claimedToday) return;
     const canvas = canvasRef.current;
@@ -119,7 +117,7 @@ const ScratchCard = () => {
     const { data, error } = await supabase.rpc("claim_daily_activity", {
       p_activity: "scratch",
       p_reward: reward,
-      p_meta: {},
+      p_meta: { device_fp: getDeviceFp() },
     });
     setSubmitting(false);
     if (error) {
@@ -128,7 +126,12 @@ const ScratchCard = () => {
     }
     const res = data as { success: boolean; error?: string };
     if (!res?.success) {
-      toast.error(res?.error === "already_claimed_today" ? "Already claimed today" : "Claim failed");
+      const msg: Record<string, string> = {
+        already_claimed_today: "Already claimed today",
+        device_limit_reached: "This device already claimed today",
+        reward_out_of_range: "Invalid reward",
+      };
+      toast.error(msg[res?.error || ""] || "Claim failed");
       setClaimedToday(true);
       return;
     }
@@ -159,13 +162,14 @@ const ScratchCard = () => {
         <Link to="/earn" className="rounded-full bg-muted/60 p-2 backdrop-blur" aria-label="Back">
           <ArrowLeft className="h-5 w-5" />
         </Link>
+        <img src={iconScratch} alt="Scratch" className="h-8 w-8" width={32} height={32} />
         <h1 className="text-xl font-extrabold">Scratch Card</h1>
         <span className="ml-auto rounded-full bg-secondary/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary">
           Daily
         </span>
       </header>
       <p className="mt-2 px-5 text-sm text-muted-foreground">
-        Reveal your hidden reward — credited instantly to your wallet.
+        Reveal your hidden reward (1–3 NC) — credited instantly.
       </p>
 
       <div className="mt-8 flex justify-center px-5">
@@ -173,12 +177,8 @@ const ScratchCard = () => {
           <div className="absolute -inset-6 rounded-3xl bg-secondary/30 blur-3xl animate-pulse-glow" />
           <div
             className="glass relative h-[260px] w-[320px] overflow-hidden rounded-3xl shadow-glow"
-            style={{
-              background:
-                "linear-gradient(135deg, hsl(255 40% 10%) 0%, hsl(270 50% 15%) 100%)",
-            }}
+            style={{ background: "linear-gradient(135deg, hsl(255 40% 10%) 0%, hsl(270 50% 15%) 100%)" }}
           >
-            {/* Reward layer */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div className="grid-bg absolute inset-0 opacity-30" />
               <Sparkles className="h-7 w-7 text-accent animate-neon-pulse" />
@@ -186,7 +186,6 @@ const ScratchCard = () => {
               <p className="mt-1 text-5xl font-extrabold text-gradient-coin">+{reward ?? "—"}</p>
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Nova Coins</p>
             </div>
-            {/* Scratch overlay */}
             {!claimedToday && (
               <canvas
                 ref={canvasRef}
@@ -222,6 +221,14 @@ const ScratchCard = () => {
             {submitting ? "Crediting…" : revealed ? "Crediting your reward…" : "Drag your finger across the card"}
           </p>
         )}
+      </div>
+
+      <div className="mt-6 flex flex-wrap justify-center gap-2 px-5">
+        {["Server-validated", "Anti-fraud", "Max 3 NC"].map((t) => (
+          <span key={t} className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
+            {t}
+          </span>
+        ))}
       </div>
 
       <BottomNav />

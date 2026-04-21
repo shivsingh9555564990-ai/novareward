@@ -24,6 +24,10 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { cn } from "@/lib/utils";
 import novaLogo from "@/assets/nova-logo.png";
 import homeHero from "@/assets/home-hero.jpg";
+import iconSurvey from "@/assets/icon-survey.png";
+import iconGames from "@/assets/icon-games.png";
+import iconBonus from "@/assets/icon-bonus.png";
+import iconCoin from "@/assets/icon-coin.png";
 
 interface Profile {
   full_name: string | null;

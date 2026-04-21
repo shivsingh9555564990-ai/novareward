@@ -30,7 +30,7 @@ const Register = () => {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/profile-setup`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: { full_name: name },
       },
     });

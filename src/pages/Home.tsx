@@ -5,7 +5,6 @@ import {
   Coins,
   Flame,
   TrendingUp,
-  Trophy,
   Sparkles,
   Gamepad2,
   ClipboardList,
@@ -14,8 +13,6 @@ import {
   RefreshCw,
   Wifi,
   WifiOff,
-  Crown,
-  Medal,
   Star,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +23,7 @@ import { formatRupees, getGreeting } from "@/lib/nova";
 import { useCountUp } from "@/hooks/useCountUp";
 import { cn } from "@/lib/utils";
 import novaLogo from "@/assets/nova-logo.png";
+import homeHero from "@/assets/home-hero.jpg";
 
 interface Profile {
   full_name: string | null;
@@ -56,11 +54,6 @@ const RECOMMENDED = [
   { id: "r5", title: "Refer a Friend", reward: 1200, time: "—", progress: 0 },
 ];
 
-const TOP_EARNERS = [
-  { rank: 1, name: "Aarav S.", coins: 18420, avatar: "🚀" },
-  { rank: 2, name: "Priya M.", coins: 15280, avatar: "⭐" },
-  { rank: 3, name: "Rohit K.", coins: 12940, avatar: "🌟" },
-];
 
 const Home = () => {
   const navigate = useNavigate();
@@ -69,7 +62,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [online, setOnline] = useState(navigator.onLine);
   const [featuredIdx, setFeaturedIdx] = useState(0);
-  const [unread, setUnread] = useState(2);
+  const [unread, setUnread] = useState(0);
 
   const greeting = useMemo(() => getGreeting(), []);
   const animatedCoins = useCountUp(profile?.coins ?? 0);
@@ -92,6 +85,29 @@ const Home = () => {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  // Real notifications unread count + realtime
+  useEffect(() => {
+    if (!user) return;
+    const loadUnread = async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .is("read_at", null);
+      setUnread(count ?? 0);
+    };
+    loadUnread();
+    const ch = supabase
+      .channel("home-notif")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` },
+        loadUnread
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user]);
 
   // Featured task rotation
   useEffect(() => {
@@ -202,10 +218,7 @@ const Home = () => {
             </button>
             <button
               aria-label="Notifications"
-              onClick={() => {
-                setUnread(0);
-                toast("Notifications coming soon");
-              }}
+              onClick={() => navigate("/notifications")}
               className="relative h-10 w-10 rounded-2xl glass flex items-center justify-center"
             >
               <Bell className="w-4 h-4" />
@@ -406,65 +419,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Top earners */}
-        <section className="animate-slide-up" style={{ animationDelay: "300ms" }}>
-          <SectionHeader
-            title="Top Earners · This week"
-            subtitle="Climb the ranks"
-            action={
-              <button
-                onClick={() => toast("Leaderboard coming soon")}
-                className="text-xs font-semibold text-primary flex items-center gap-1"
-              >
-                <Trophy className="w-3.5 h-3.5" /> Full board
-              </button>
-            }
-          />
-          <div className="rounded-3xl glass p-2 divide-y divide-primary/10">
-            {TOP_EARNERS.map((u) => {
-              const Icon = u.rank === 1 ? Crown : u.rank === 2 ? Medal : Trophy;
-              const tint =
-                u.rank === 1
-                  ? "text-coin"
-                  : u.rank === 2
-                    ? "text-accent"
-                    : "text-secondary";
-              return (
-                <div key={u.rank} className="flex items-center gap-3 p-3">
-                  <div className={cn("h-9 w-9 rounded-xl bg-muted flex items-center justify-center", tint)}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div className="h-9 w-9 rounded-full bg-gradient-primary p-[2px]">
-                    <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-base">
-                      {u.avatar}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold leading-tight">{u.name}</p>
-                    <p className="text-[11px] text-muted-foreground">Rank #{u.rank}</p>
-                  </div>
-                  <p className="text-coin font-extrabold text-sm flex items-center gap-1">
-                    <Coins className="w-3.5 h-3.5" /> {u.coins.toLocaleString()}
-                  </p>
-                </div>
-              );
-            })}
-            <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-2xl mt-1">
-              <div className="h-9 w-9 rounded-xl bg-primary/20 flex items-center justify-center text-primary text-xs font-bold">
-                #—
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold leading-tight">You</p>
-                <p className="text-[11px] text-muted-foreground">
-                  Earn more to enter the board
-                </p>
-              </div>
-              <p className="text-primary font-extrabold text-sm flex items-center gap-1">
-                <Coins className="w-3.5 h-3.5" /> {profile?.coins ?? 0}
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
 
       <BottomNav />

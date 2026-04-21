@@ -113,6 +113,48 @@ export type Database = {
         }
         Relationships: []
       }
+      redemptions: {
+        Row: {
+          amount_inr: number
+          brand: string | null
+          coins_spent: number
+          created_at: string
+          id: string
+          meta: Json | null
+          status: string
+          type: string
+          updated_at: string
+          upi_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_inr: number
+          brand?: string | null
+          coins_spent: number
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          status?: string
+          type: string
+          updated_at?: string
+          upi_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_inr?: number
+          brand?: string | null
+          coins_spent?: number
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          status?: string
+          type?: string
+          updated_at?: string
+          upi_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -156,6 +198,15 @@ export type Database = {
     Functions: {
       claim_daily_activity: {
         Args: { p_activity: string; p_meta?: Json; p_reward: number }
+        Returns: Json
+      }
+      create_redemption: {
+        Args: {
+          p_amount_inr: number
+          p_brand: string
+          p_type: string
+          p_upi_id?: string
+        }
         Returns: Json
       }
       credit_user_coins: {

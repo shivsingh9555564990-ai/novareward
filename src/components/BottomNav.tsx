@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Zap, Wallet, Gift, User } from "lucide-react";
+import { Home, Zap, Wallet, Gift, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -7,7 +7,7 @@ const tabs = [
   { to: "/earn", icon: Zap, label: "Earn" },
   { to: "/wallet", icon: Wallet, label: "Wallet" },
   { to: "/redeem", icon: Gift, label: "Redeem" },
-  { to: "/profile", icon: User, label: "Profile" },
+  { to: "/leaderboard", icon: Trophy, label: "Ranks" },
 ];
 
 const BottomNav = () => {

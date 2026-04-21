@@ -62,7 +62,7 @@ const Splash = () => {
         <div className="text-center space-y-2">
           <h1 className="text-5xl font-extrabold tracking-tight">
             <span className="text-foreground">Nova</span>
-            <span className="text-success">Reward</span>
+            <span className="text-success">Rewards</span>
           </h1>
           <p className="text-muted-foreground text-sm font-medium tracking-[0.3em] uppercase">
             Earn · Play · Redeem

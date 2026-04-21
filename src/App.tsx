@@ -19,6 +19,12 @@ import SpinWheel from "./pages/SpinWheel";
 import ScratchCard from "./pages/ScratchCard";
 import Wallet from "./pages/Wallet";
 import Redeem from "./pages/Redeem";
+import MyRedemptions from "./pages/MyRedemptions";
+import EarnMore from "./pages/EarnMore";
+import SurveyDetail from "./pages/SurveyDetail";
+import TaskDetail from "./pages/TaskDetail";
+import Games from "./pages/Games";
+import Quiz from "./pages/Quiz";
 import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
 import Notifications from "./pages/Notifications";
@@ -51,6 +57,12 @@ const App = () => (
             <Route path="/scratch" element={<ScratchCard />} />
             <Route path="/wallet" element={<Wallet />} />
             <Route path="/redeem" element={<Redeem />} />
+            <Route path="/my-redemptions" element={<MyRedemptions />} />
+            <Route path="/earn-more" element={<EarnMore />} />
+            <Route path="/survey/:id" element={<SurveyDetail />} />
+            <Route path="/task/:id" element={<TaskDetail />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/quiz" element={<Quiz />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/notifications" element={<Notifications />} />

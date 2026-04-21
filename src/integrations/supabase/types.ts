@@ -220,6 +220,16 @@ export type Database = {
         }
         Returns: string
       }
+      get_leaderboard: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          coins: number
+          name: string
+          rank: number
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -9,6 +9,10 @@ import earnHero from "@/assets/earn-hero.jpg";
 import surveyImg from "@/assets/survey-card.jpg";
 import spinImg from "@/assets/spin-wheel.jpg";
 import scratchImg from "@/assets/scratch-card.jpg";
+import iconSpin from "@/assets/icon-spin.png";
+import iconScratch from "@/assets/icon-scratch.png";
+import iconSurvey from "@/assets/icon-survey.png";
+import iconGames from "@/assets/icon-games.png";
 
 type Survey = {
   id: string;
@@ -78,8 +82,9 @@ const Earn = () => {
           <ActionTile
             to="/spin"
             img={spinImg}
+            badge={iconSpin}
             title="Spin Wheel"
-            subtitle="Daily · up to 500 NC"
+            subtitle="Daily · 1–5 NC"
             icon={<Disc3 className="h-4 w-4" />}
             done={!!claimedToday.spin}
             accent="from-accent/40 to-primary/30"
@@ -87,8 +92,9 @@ const Earn = () => {
           <ActionTile
             to="/scratch"
             img={scratchImg}
+            badge={iconScratch}
             title="Scratch Card"
-            subtitle="Daily · up to 300 NC"
+            subtitle="Daily · 1–3 NC"
             icon={<Sparkles className="h-4 w-4" />}
             done={!!claimedToday.scratch}
             accent="from-secondary/40 to-primary/30"
@@ -96,6 +102,7 @@ const Earn = () => {
           <ActionTile
             to="/earn"
             img={surveyImg}
+            badge={iconSurvey}
             title="Surveys"
             subtitle={`${MOCK_SURVEYS.length} live now`}
             icon={<ListChecks className="h-4 w-4" />}
@@ -104,7 +111,8 @@ const Earn = () => {
           <ActionTile
             to="/earn"
             img={earnHero}
-            title="Tasks & Offers"
+            badge={iconGames}
+            title="Games & Offers"
             subtitle="Coming via CPX"
             icon={<Target className="h-4 w-4" />}
             disabled
@@ -194,6 +202,7 @@ const Earn = () => {
 const ActionTile = ({
   to,
   img,
+  badge,
   title,
   subtitle,
   icon,
@@ -203,6 +212,7 @@ const ActionTile = ({
 }: {
   to: string;
   img: string;
+  badge?: string;
   title: string;
   subtitle: string;
   icon: React.ReactNode;
@@ -246,6 +256,11 @@ const ActionTile = ({
             </span>
           )}
         </div>
+        {badge && (
+          <img src={badge} alt="" aria-hidden="true"
+            className="absolute right-2 top-10 h-14 w-14 object-contain drop-shadow-[0_0_12px_hsl(var(--primary)/0.6)]"
+            loading="lazy" width={56} height={56} />
+        )}
         <div>
           <h3 className="text-base font-extrabold leading-tight">{title}</h3>
           <p className="text-[11px] text-muted-foreground">{subtitle}</p>

@@ -5,7 +5,6 @@ import {
   Coins,
   Flame,
   TrendingUp,
-  Trophy,
   Sparkles,
   Gamepad2,
   ClipboardList,
@@ -14,8 +13,6 @@ import {
   RefreshCw,
   Wifi,
   WifiOff,
-  Crown,
-  Medal,
   Star,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,6 +23,7 @@ import { formatRupees, getGreeting } from "@/lib/nova";
 import { useCountUp } from "@/hooks/useCountUp";
 import { cn } from "@/lib/utils";
 import novaLogo from "@/assets/nova-logo.png";
+import homeHero from "@/assets/home-hero.jpg";
 
 interface Profile {
   full_name: string | null;
@@ -56,11 +54,6 @@ const RECOMMENDED = [
   { id: "r5", title: "Refer a Friend", reward: 1200, time: "—", progress: 0 },
 ];
 
-const TOP_EARNERS = [
-  { rank: 1, name: "Aarav S.", coins: 18420, avatar: "🚀" },
-  { rank: 2, name: "Priya M.", coins: 15280, avatar: "⭐" },
-  { rank: 3, name: "Rohit K.", coins: 12940, avatar: "🌟" },
-];
 
 const Home = () => {
   const navigate = useNavigate();

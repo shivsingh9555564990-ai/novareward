@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Disc3, Gift, ListChecks, Search, Sparkles, Star, Target, Timer, Zap, Brain } from "lucide-react";
+import { ArrowRight, Disc3, Flame, Gift, ListChecks, Search, Sparkles, Star, Target, Timer, Zap, Brain } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";

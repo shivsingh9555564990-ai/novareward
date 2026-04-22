@@ -44,6 +44,75 @@ export type Database = {
         }
         Relationships: []
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      friend_requests: {
+        Row: {
+          created_at: string
+          id: string
+          receiver_id: string
+          responded_at: string | null
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          receiver_id: string
+          responded_at?: string | null
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          receiver_id?: string
+          responded_at?: string | null
+          sender_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      friendships: {
+        Row: {
+          created_at: string
+          id: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: []
+      }
       game_plays: {
         Row: {
           created_at: string
@@ -298,8 +367,12 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           coins: number
           created_at: string
+          followers_count: number
+          following_count: number
+          friends_count: number
           full_name: string | null
           id: string
           interests: string[] | null
@@ -309,8 +382,12 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           coins?: number
           created_at?: string
+          followers_count?: number
+          following_count?: number
+          friends_count?: number
           full_name?: string | null
           id: string
           interests?: string[] | null
@@ -320,8 +397,12 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           coins?: number
           created_at?: string
+          followers_count?: number
+          following_count?: number
+          friends_count?: number
           full_name?: string | null
           id?: string
           interests?: string[] | null
@@ -657,10 +738,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_friend_request: { Args: { p_request_id: string }; Returns: Json }
       apply_referral_code: {
         Args: { p_code: string; p_device_fp: string }
         Returns: Json
       }
+      cancel_friend_request: { Args: { p_request_id: string }; Returns: Json }
       claim_daily_activity: {
         Args: { p_activity: string; p_meta?: Json; p_reward: number }
         Returns: Json
@@ -693,6 +776,8 @@ export type Database = {
         }
         Returns: string
       }
+      decline_friend_request: { Args: { p_request_id: string }; Returns: Json }
+      follow_user: { Args: { p_target: string }; Returns: Json }
       gen_referral_code: { Args: never; Returns: string }
       get_leaderboard: {
         Args: { p_limit?: number }
@@ -704,10 +789,52 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_user_profile: { Args: { p_user_id: string }; Returns: Json }
+      list_friend_requests: {
+        Args: { p_box?: string }
+        Returns: {
+          avatar_url: string
+          coins: number
+          created_at: string
+          direction: string
+          name: string
+          other_user_id: string
+          request_id: string
+        }[]
+      }
+      list_friends: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_url: string
+          coins: number
+          friends_since: string
+          name: string
+          user_id: string
+        }[]
+      }
       play_game: {
         Args: { p_device_fp: string; p_game: string; p_score: number }
         Returns: Json
       }
+      remove_friend: { Args: { p_other: string }; Returns: Json }
+      search_users: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          avatar_url: string
+          coins: number
+          followers_count: number
+          friends_count: number
+          incoming_request_id: string
+          is_following: boolean
+          is_friend: boolean
+          name: string
+          request_incoming: boolean
+          request_outgoing: boolean
+          user_id: string
+        }[]
+      }
+      send_friend_request: { Args: { p_receiver: string }; Returns: Json }
+      unfollow_user: { Args: { p_target: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

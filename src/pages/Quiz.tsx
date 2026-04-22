@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Brain, CheckCircle2, Clock, Share2, Trophy, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ const Quiz = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [alreadyPlayed, setAlreadyPlayed] = useState(false);
+  const [todayAttempt, setTodayAttempt] = useState<{ score: number; reward: number } | null>(null);
   const [idx, setIdx] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -34,6 +37,24 @@ const Quiz = () => {
 
   useEffect(() => {
     (async () => {
+      // Check daily limit (Asia/Kolkata)
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      const startUtc = new Date(`${today}T00:00:00+05:30`).toISOString();
+      const endUtc = new Date(`${today}T23:59:59+05:30`).toISOString();
+      const { data: attempts } = await supabase
+        .from("quiz_attempts")
+        .select("score, reward")
+        .gte("created_at", startUtc)
+        .lte("created_at", endUtc)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (attempts && attempts.length > 0) {
+        setAlreadyPlayed(true);
+        setTodayAttempt({ score: attempts[0].score, reward: attempts[0].reward });
+        setLoading(false);
+        return;
+      }
+
       const { data } = await supabase.from("quiz_questions").select("*").eq("is_active", true).limit(50);
       const all = (data ?? []) as any[];
       const shuffled = [...all].sort(() => Math.random() - 0.5).slice(0, TOTAL_Q);
@@ -44,11 +65,11 @@ const Quiz = () => {
 
   // Timer
   useEffect(() => {
-    if (loading || submitted || done) return;
+    if (loading || submitted || done || alreadyPlayed) return;
     if (timeLeft <= 0) { handleSubmit(null); return; }
     const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
     return () => clearTimeout(t);
-  }, [timeLeft, loading, submitted, done]);
+  }, [timeLeft, loading, submitted, done, alreadyPlayed]);
 
   const current = questions[idx];
 
@@ -62,17 +83,24 @@ const Quiz = () => {
 
   const next = async () => {
     if (idx + 1 >= questions.length) {
-      // finish
       const finalScore = score;
       const { data, error } = await supabase.rpc("complete_quiz", {
         p_score: finalScore,
         p_total: TOTAL_Q,
         p_category: "Mixed",
       });
-      if (error) toast.error("Could not save quiz");
-      else {
-        const r = (data as any)?.reward ?? 0;
-        setReward(r);
+      if (error) {
+        toast.error("Could not save quiz");
+      } else {
+        const res = data as any;
+        if (!res?.success) {
+          if (res?.error === "already_played_today") toast.error("Aaj ka quiz ho chuka hai. Kal aana!");
+          else toast.error(res?.error ?? "Quiz failed");
+        } else {
+          const r = res?.reward ?? 0;
+          setReward(r);
+          toast.success(`+${r} NC credited! 🎉`);
+        }
       }
       setDone(true);
       return;
@@ -84,6 +112,52 @@ const Quiz = () => {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
+
+  if (alreadyPlayed && todayAttempt) {
+    return (
+      <div className="relative min-h-screen pb-28 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
+        <header className="relative px-5 pt-8 flex items-center gap-3">
+          <button onClick={() => navigate("/games")} className="rounded-full bg-muted/60 p-2"><ArrowLeft className="h-5 w-5" /></button>
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-accent">Daily Quiz</p>
+            <h1 className="text-2xl font-extrabold"><span className="text-gradient-neon">Already Played</span></h1>
+          </div>
+        </header>
+        <main className="relative z-10 flex flex-col items-center justify-center px-6 mt-12 text-center">
+          <div className="h-24 w-24 rounded-full bg-gradient-primary p-[3px] shadow-glow animate-pulse-glow">
+            <div className="h-full w-full rounded-full bg-background flex items-center justify-center">
+              <Trophy className="h-10 w-10 text-coin" />
+            </div>
+          </div>
+          <h2 className="mt-6 text-2xl font-extrabold">Aaj ka quiz ho chuka 🎉</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Roz sirf 1 baar khel sakte ho. Kal naya quiz!</p>
+
+          <div className="mt-6 grid w-full max-w-sm grid-cols-2 gap-3">
+            <div className="glass rounded-2xl p-4">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Today's Score</p>
+              <p className="mt-1 text-3xl font-extrabold">{todayAttempt.score}/{TOTAL_Q}</p>
+            </div>
+            <div className="glass rounded-2xl p-4">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Earned</p>
+              <p className="mt-1 text-3xl font-extrabold text-gradient-coin">+{todayAttempt.reward}</p>
+            </div>
+          </div>
+
+          <div className="mt-6 w-full max-w-sm space-y-2">
+            <Button variant="hero" size="lg" className="w-full" onClick={() => navigate("/games")}>
+              Play Other Games
+            </Button>
+            <Button variant="ghost" size="lg" className="w-full" onClick={() => navigate("/wallet")}>
+              View Wallet
+            </Button>
+          </div>
+        </main>
+        <AdSlot />
+        <BottomNav />
+      </div>
+    );
+  }
 
   if (questions.length === 0) {
     return <div className="min-h-screen flex flex-col items-center justify-center gap-3"><p>No questions available.</p><Button onClick={() => navigate("/games")}>Back</Button></div>;
@@ -118,15 +192,10 @@ const Quiz = () => {
           <div className="mt-3 w-full max-w-sm glass rounded-2xl p-4">
             <p className="text-xs text-muted-foreground">Coins earned</p>
             <div className="mt-2 flex items-center justify-between text-sm">
-              <span>Correct × 10 NC</span>
-              <span className="font-bold text-gradient-coin">+{score * 10} NC</span>
+              <span>Correct × 1 NC</span>
+              <span className="font-bold text-gradient-coin">+{score} NC</span>
             </div>
-            {score >= 10 && (
-              <div className="mt-1 flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Perfect bonus</span>
-                <span className="font-bold text-success">capped at 100</span>
-              </div>
-            )}
+            <p className="mt-2 text-[10px] text-muted-foreground">Daily limit: 1 quiz per day</p>
           </div>
 
           <div className="mt-6 w-full max-w-sm space-y-2">
@@ -142,6 +211,7 @@ const Quiz = () => {
             <Button variant="ghost" size="lg" className="w-full" onClick={() => navigate("/games")}>Back to Games</Button>
           </div>
         </main>
+        <AdSlot />
         <BottomNav />
       </div>
     );
@@ -153,7 +223,7 @@ const Quiz = () => {
       <header className="relative px-5 pt-8 flex items-center gap-3">
         <button onClick={() => navigate("/games")} className="rounded-full bg-muted/60 p-2"><ArrowLeft className="h-5 w-5" /></button>
         <div className="flex-1">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-accent flex items-center gap-1"><Brain className="h-3 w-3" /> Quiz</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-accent flex items-center gap-1"><Brain className="h-3 w-3" /> Quiz · 1/day</p>
           <p className="text-sm font-bold">Question {idx + 1} of {TOTAL_Q}</p>
         </div>
         <div className={cn("flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold tabular-nums", timeLeft <= 5 ? "bg-destructive/20 text-destructive animate-pulse" : "bg-accent/15 text-accent")}>
@@ -164,7 +234,7 @@ const Quiz = () => {
       <div className="px-5 mt-3">
         <Progress value={((idx + 1) / TOTAL_Q) * 100} className="h-1.5" />
         <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>Score: <span className="font-bold text-coin">{score}</span></span>
+          <span>Score: <span className="font-bold text-coin">{score}</span> · 1 NC each</span>
           <span>{current.category}</span>
         </div>
       </div>
@@ -222,6 +292,7 @@ const Quiz = () => {
           </Button>
         )}
       </main>
+      <AdSlot />
     </div>
   );
 };

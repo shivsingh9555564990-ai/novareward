@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { toast } from "sonner";
 import { getDeviceFp } from "@/lib/deviceFp";
 import iconScratch from "@/assets/icon-scratch.png";
@@ -231,6 +232,7 @@ const ScratchCard = () => {
         ))}
       </div>
 
+      <AdSlot />
       <BottomNav />
     </div>
   );

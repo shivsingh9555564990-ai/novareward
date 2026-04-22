@@ -7,6 +7,7 @@ import { getDeviceFp } from "@/lib/deviceFp";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 
 const FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
 
@@ -127,6 +128,7 @@ const LuckyDice = () => {
           </div>
         )}
       </main>
+      <AdSlot />
       <BottomNav />
     </div>
   );

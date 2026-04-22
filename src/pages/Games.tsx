@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Brain, Disc3, Sparkles, Star, Zap, Gift, Dices, Puzzle } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { cn } from "@/lib/utils";
 import iconSpin from "@/assets/icon-spin.png";
 import iconScratch from "@/assets/icon-scratch.png";
@@ -19,7 +20,7 @@ type Game = {
 };
 
 const GAMES: Game[] = [
-  { to: "/quiz", title: "Daily Quiz", desc: "10 questions · mixed", reward: "10–100 NC", difficulty: 2, icon: <Brain className="h-5 w-5" />, free: true, accent: "from-primary/40 to-accent/30" },
+  { to: "/quiz", title: "Daily Quiz", desc: "10 Q · 1 NC each · 1/day", reward: "Up to 10 NC", difficulty: 2, icon: <Brain className="h-5 w-5" />, free: true, accent: "from-primary/40 to-accent/30" },
   { to: "/spin", title: "Spin Wheel", desc: "Daily spin", reward: "1–5 NC", difficulty: 1, icon: <Disc3 className="h-5 w-5" />, badge: iconSpin, free: true, accent: "from-accent/40 to-secondary/30" },
   { to: "/scratch", title: "Scratch Card", desc: "Reveal & win", reward: "1–3 NC", difficulty: 1, icon: <Sparkles className="h-5 w-5" />, badge: iconScratch, free: true, accent: "from-secondary/40 to-primary/30" },
   { to: "/games/tap-coin", title: "Tap the Coin", desc: "15s tap rush · daily 5×", reward: "+1 NC", difficulty: 1, icon: <Zap className="h-5 w-5" />, free: true, accent: "from-coin/30 to-accent/30" },
@@ -89,6 +90,7 @@ const Games = () => {
           More games unlock weekly · Tap to play
         </p>
       </main>
+      <AdSlot />
       <BottomNav />
     </div>
   );

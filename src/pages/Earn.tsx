@@ -237,4 +237,77 @@ const ActionTile = ({ to, badge, title, subtitle, icon, done, disabled, accent }
   );
 };
 
+const SPONSORED_URL = "https://omg10.com/4/10910510";
+const SPONSORED_REWARD = 25;
+
+const SponsoredTask = () => {
+  const [opened, setOpened] = useState(false);
+  const handleOpen = () => {
+    setOpened(true);
+    window.open(SPONSORED_URL, "_blank", "noopener,noreferrer");
+  };
+  return (
+    <button
+      onClick={handleOpen}
+      className="group relative block w-full overflow-hidden rounded-3xl p-[1.5px] text-left transition-bounce active:scale-[0.98]"
+    >
+      {/* Animated gradient border */}
+      <span className="absolute inset-0 rounded-3xl bg-[conic-gradient(from_0deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--coin)),hsl(var(--secondary)),hsl(var(--primary)))] opacity-90 animate-spin-slow [animation-duration:6s]" />
+      <div className="relative rounded-[calc(1.5rem-1.5px)] bg-background/85 backdrop-blur-xl p-4 overflow-hidden">
+        {/* Glow blobs */}
+        <div className="pointer-events-none absolute -top-16 -right-12 h-44 w-44 rounded-full bg-primary/40 blur-3xl animate-pulse" />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-accent/30 blur-3xl animate-pulse [animation-delay:600ms]" />
+        <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
+
+        <div className="relative flex items-start gap-3">
+          <div className="relative shrink-0">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-primary blur-md opacity-80 animate-pulse" />
+            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-glow">
+              <Flame className="h-6 w-6 text-primary-foreground" />
+            </div>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full bg-coin/15 text-coin px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider border border-coin/30">
+                <Sparkles className="h-2.5 w-2.5" /> Featured
+              </span>
+              <span className="rounded-full bg-success/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success border border-success/30">Hot</span>
+              <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent border border-accent/30">Sponsored</span>
+            </div>
+            <h3 className="mt-1.5 text-base font-extrabold leading-tight">
+              Visit Sponsor & Earn Instantly
+            </h3>
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              Tap to open partner offer · Stay 30s · Reward auto-credits
+            </p>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Timer className="h-3 w-3" /> ~30s
+              </span>
+              <span className="text-[10px] text-muted-foreground">·</span>
+              <span className="flex items-center gap-0.5 text-[10px] text-coin">
+                {[0,1,2].map(i => <Star key={i} className="h-2.5 w-2.5 fill-coin text-coin" />)}
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <div className="text-xl font-extrabold text-gradient-coin whitespace-nowrap">+{SPONSORED_REWARD}</div>
+            <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Nova</div>
+          </div>
+        </div>
+
+        <div className="relative mt-3 flex items-center justify-between rounded-2xl bg-gradient-primary/90 px-4 py-2.5 shadow-glow overflow-hidden">
+          <span className="absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,hsl(var(--primary-foreground)/0.35)_50%,transparent_70%)] -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          <span className="relative text-xs font-extrabold uppercase tracking-wider text-primary-foreground">
+            {opened ? "Reopen Offer" : "Start Task Now"}
+          </span>
+          <ArrowRight className="relative h-4 w-4 text-primary-foreground group-hover:translate-x-1 transition-transform" />
+        </div>
+      </div>
+    </button>
+  );
+};
+
 export default Earn;

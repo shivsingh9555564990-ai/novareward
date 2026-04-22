@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { getDeviceFp } from "@/lib/deviceFp";
 
 type AuthContextType = {
   session: Session | null;
@@ -16,6 +17,27 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+const applyPendingReferral = async () => {
+  const code = localStorage.getItem("pending_ref");
+  if (!code) return;
+  try {
+    const fp = getDeviceFp();
+    const { data, error } = await supabase.rpc("apply_referral_code", { p_code: code, p_device_fp: fp });
+    if (error) return;
+    const res = data as any;
+    // Always clear after attempt — success or expected failure (already_referred, self, device_used).
+    // This prevents retry loops on every login.
+    localStorage.removeItem("pending_ref");
+    if (res?.success) {
+      // toast import would create circular; rely on Refer page UI.
+      // eslint-disable-next-line no-console
+      console.log("Referral linked:", res.message);
+    }
+  } catch {
+    // ignore
+  }
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -27,6 +49,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       setLoading(false);
+      // Apply pending referral code (deferred to avoid blocking auth callback)
+      if (newSession?.user) {
+        setTimeout(() => applyPendingReferral(), 0);
+      }
     });
 
     // 2. THEN check for existing session

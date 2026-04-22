@@ -24,6 +24,10 @@ import EarnMore from "./pages/EarnMore";
 import SurveyDetail from "./pages/SurveyDetail";
 import TaskDetail from "./pages/TaskDetail";
 import Games from "./pages/Games";
+import TapCoin from "./pages/games/TapCoin";
+import MemoryMatch from "./pages/games/MemoryMatch";
+import LuckyDice from "./pages/games/LuckyDice";
+import Refer from "./pages/Refer";
 import Quiz from "./pages/Quiz";
 import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
@@ -62,6 +66,10 @@ const App = () => (
             <Route path="/survey/:id" element={<SurveyDetail />} />
             <Route path="/task/:id" element={<TaskDetail />} />
             <Route path="/games" element={<Games />} />
+            <Route path="/games/tap-coin" element={<TapCoin />} />
+            <Route path="/games/memory-match" element={<MemoryMatch />} />
+            <Route path="/games/lucky-dice" element={<LuckyDice />} />
+            <Route path="/refer" element={<Refer />} />
             <Route path="/quiz" element={<Quiz />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/transactions" element={<Transactions />} />

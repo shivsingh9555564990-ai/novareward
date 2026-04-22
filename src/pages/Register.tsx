@@ -1,23 +1,37 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, User, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, User, Lock, Eye, EyeOff, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [mode, setMode] = useState<"email" | "phone">("email");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const ref = params.get("ref");
+    if (ref) {
+      const clean = ref.toUpperCase().trim().slice(0, 8);
+      setReferralCode(clean);
+      localStorage.setItem("pending_ref", clean);
+    } else {
+      const stored = localStorage.getItem("pending_ref");
+      if (stored) setReferralCode(stored);
+    }
+  }, [params]);
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +39,7 @@ const Register = () => {
       toast.error("Password कम से कम 6 characters का हो");
       return;
     }
+    if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -78,6 +93,7 @@ const Register = () => {
   };
 
   const handleGoogle = async () => {
+    if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/home`,
     });
@@ -167,6 +183,27 @@ const Register = () => {
                 {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="referral">
+              Referral Code <span className="text-muted-foreground font-normal">(optional)</span>
+            </Label>
+            <div className="relative">
+              <Gift className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coin" />
+              <Input
+                id="referral"
+                placeholder="ABCD1234"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 8))}
+                className="pl-11 h-12 rounded-2xl uppercase tracking-wider"
+                maxLength={8}
+              />
+            </div>
+            {referralCode && (
+              <p className="text-[11px] text-success flex items-center gap-1">
+                <Gift className="w-3 h-3" /> Aapko +25 NC welcome bonus milega friend ki first earning par.
+              </p>
+            )}
           </div>
           <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
             {loading ? "Creating..." : "Create Account"}

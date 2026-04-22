@@ -116,7 +116,7 @@ const Earn = () => {
           <ActionTile to="/spin" badge={iconSpin} title="Spin Wheel" subtitle="Daily · 1–5 NC" icon={<Disc3 className="h-4 w-4" />} done={!!claimedToday.spin} accent="from-accent/40 to-primary/30" />
           <ActionTile to="/scratch" badge={iconScratch} title="Scratch Card" subtitle="Daily · 1–3 NC" icon={<Sparkles className="h-4 w-4" />} done={!!claimedToday.scratch} accent="from-secondary/40 to-primary/30" />
           <ActionTile to="/games" badge={iconGames} title="Games & Quiz" subtitle="Up to 100 NC" icon={<Brain className="h-4 w-4" />} accent="from-primary/40 to-accent/30" />
-          <ActionTile to="#" badge={iconSurvey} title="Refer Friends" subtitle="200 NC each" icon={<Target className="h-4 w-4" />} disabled accent="from-secondary/40 to-accent/30" />
+          <ActionTile to="/refer" badge={iconSurvey} title="Refer & Earn" subtitle="+50 NC each" icon={<Target className="h-4 w-4" />} accent="from-secondary/40 to-accent/30" />
         </div>
       </section>
 

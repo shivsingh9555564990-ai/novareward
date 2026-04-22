@@ -1,23 +1,37 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, User, Lock, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, User, Lock, Eye, EyeOff, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [mode, setMode] = useState<"email" | "phone">("email");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const ref = params.get("ref");
+    if (ref) {
+      const clean = ref.toUpperCase().trim().slice(0, 8);
+      setReferralCode(clean);
+      localStorage.setItem("pending_ref", clean);
+    } else {
+      const stored = localStorage.getItem("pending_ref");
+      if (stored) setReferralCode(stored);
+    }
+  }, [params]);
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -418,6 +418,57 @@ export type Database = {
         }
         Relationships: []
       }
+      sponsored_offers: {
+        Row: {
+          accent_color: string | null
+          animation_style: string
+          badge_emoji: string | null
+          badge_label: string | null
+          created_at: string
+          cta_url: string
+          duration_label: string | null
+          id: string
+          is_active: boolean
+          reward: number
+          sort_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          animation_style?: string
+          badge_emoji?: string | null
+          badge_label?: string | null
+          created_at?: string
+          cta_url: string
+          duration_label?: string | null
+          id?: string
+          is_active?: boolean
+          reward?: number
+          sort_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          animation_style?: string
+          badge_emoji?: string | null
+          badge_label?: string | null
+          created_at?: string
+          cta_url?: string
+          duration_label?: string | null
+          id?: string
+          is_active?: boolean
+          reward?: number
+          sort_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number

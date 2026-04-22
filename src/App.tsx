@@ -33,6 +33,10 @@ import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
 import Notifications from "./pages/Notifications";
 import Leaderboard from "./pages/Leaderboard";
+import Discover from "./pages/Discover";
+import Friends from "./pages/Friends";
+import FriendRequests from "./pages/FriendRequests";
+import UserProfile from "./pages/UserProfile";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
@@ -75,6 +79,10 @@ const App = () => (
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/discover" element={<Discover />} />
+            <Route path="/friends" element={<Friends />} />
+            <Route path="/friend-requests" element={<FriendRequests />} />
+            <Route path="/u/:id" element={<UserProfile />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

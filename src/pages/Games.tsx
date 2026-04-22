@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Brain, Disc3, Sparkles, Star, Zap, Gift, Dices, Puzzle } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { cn } from "@/lib/utils";
 import iconSpin from "@/assets/icon-spin.png";
 import iconScratch from "@/assets/icon-scratch.png";
@@ -89,6 +90,7 @@ const Games = () => {
           More games unlock weekly · Tap to play
         </p>
       </main>
+      <AdSlot />
       <BottomNav />
     </div>
   );

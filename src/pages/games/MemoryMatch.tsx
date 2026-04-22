@@ -7,6 +7,7 @@ import { getDeviceFp } from "@/lib/deviceFp";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { cn } from "@/lib/utils";
 
 const EMOJIS = ["🚀", "💎", "🔥", "⭐", "🎯", "🎮"];
@@ -175,6 +176,7 @@ const MemoryMatch = () => {
           </div>
         )}
       </main>
+      <AdSlot />
       <BottomNav />
     </div>
   );

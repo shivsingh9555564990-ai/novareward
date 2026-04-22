@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
+import AdSlot from "@/components/AdSlot";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { getDeviceFp } from "@/lib/deviceFp";
@@ -204,6 +205,7 @@ const SpinWheel = () => {
         ))}
       </div>
 
+      <AdSlot />
       <BottomNav />
     </div>
   );

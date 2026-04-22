@@ -33,6 +33,10 @@ import Profile from "./pages/Profile";
 import Transactions from "./pages/Transactions";
 import Notifications from "./pages/Notifications";
 import Leaderboard from "./pages/Leaderboard";
+import Discover from "./pages/Discover";
+import Friends from "./pages/Friends";
+import FriendRequests from "./pages/FriendRequests";
+import UserProfile from "./pages/UserProfile";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 

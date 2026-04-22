@@ -140,10 +140,24 @@ const Earn = () => {
         </div>
       </section>
 
-      {/* Sponsored / Special Task */}
-      <section className="mt-6 px-4">
-        <SponsoredTask />
-      </section>
+      {/* Sponsored / Special Tasks */}
+      {sponsored.length > 0 && (
+        <section className="mt-6 px-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-gradient-neon flex items-center gap-2">
+              <Sparkles className="h-4 w-4" /> Sponsored
+            </h2>
+            <span className="rounded-full border border-coin/40 bg-coin/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-coin">
+              Instant Reward
+            </span>
+          </div>
+          <div className="space-y-4">
+            {sponsored.map((s, i) => (
+              <SponsoredTask key={s.id} offer={s} index={i} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Offers list */}
       <section className="mt-5 px-4">

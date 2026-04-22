@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      game_plays: {
+        Row: {
+          created_at: string
+          device_fp: string | null
+          game: string
+          id: string
+          meta: Json | null
+          play_date: string
+          reward: number
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fp?: string | null
+          game: string
+          id?: string
+          meta?: Json | null
+          play_date?: string
+          reward?: number
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fp?: string | null
+          game?: string
+          id?: string
+          meta?: Json | null
+          play_date?: string
+          reward?: number
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       gift_card_brands: {
         Row: {
           category: string
@@ -418,6 +454,75 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          total_earned: number
+          user_id: string
+          uses_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          total_earned?: number
+          user_id: string
+          uses_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          total_earned?: number
+          user_id?: string
+          uses_count?: number
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          code_used: string
+          created_at: string
+          credited_at: string | null
+          device_fp: string | null
+          id: string
+          ip_hash: string | null
+          referred_reward: number
+          referred_user_id: string
+          referrer_id: string
+          referrer_reward: number
+          status: string
+        }
+        Insert: {
+          code_used: string
+          created_at?: string
+          credited_at?: string | null
+          device_fp?: string | null
+          id?: string
+          ip_hash?: string | null
+          referred_reward?: number
+          referred_user_id: string
+          referrer_id: string
+          referrer_reward?: number
+          status?: string
+        }
+        Update: {
+          code_used?: string
+          created_at?: string
+          credited_at?: string | null
+          device_fp?: string | null
+          id?: string
+          ip_hash?: string | null
+          referred_reward?: number
+          referred_user_id?: string
+          referrer_id?: string
+          referrer_reward?: number
+          status?: string
+        }
+        Relationships: []
+      }
       sponsored_offers: {
         Row: {
           accent_color: string | null
@@ -552,6 +657,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_referral_code: {
+        Args: { p_code: string; p_device_fp: string }
+        Returns: Json
+      }
       claim_daily_activity: {
         Args: { p_activity: string; p_meta?: Json; p_reward: number }
         Returns: Json
@@ -569,6 +678,10 @@ export type Database = {
         }
         Returns: Json
       }
+      credit_referral_on_first_earn: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       credit_user_coins: {
         Args: {
           p_amount: number
@@ -580,6 +693,7 @@ export type Database = {
         }
         Returns: string
       }
+      gen_referral_code: { Args: never; Returns: string }
       get_leaderboard: {
         Args: { p_limit?: number }
         Returns: {
@@ -589,6 +703,10 @@ export type Database = {
           rank: number
           user_id: string
         }[]
+      }
+      play_game: {
+        Args: { p_device_fp: string; p_game: string; p_score: number }
+        Returns: Json
       }
     }
     Enums: {

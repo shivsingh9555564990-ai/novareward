@@ -39,6 +39,7 @@ const Register = () => {
       toast.error("Password कम से कम 6 characters का हो");
       return;
     }
+    if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -92,6 +93,7 @@ const Register = () => {
   };
 
   const handleGoogle = async () => {
+    if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/home`,
     });

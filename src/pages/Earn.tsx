@@ -27,12 +27,26 @@ type Offer = {
   created_at: string;
 };
 
+type SponsoredOffer = {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  cta_url: string;
+  reward: number;
+  duration_label: string | null;
+  badge_label: string | null;
+  badge_emoji: string | null;
+  animation_style: string;
+  sort_order: number;
+};
+
 type Filter = "all" | "survey" | "task" | "game";
 type Sort = "newest" | "reward" | "time";
 
 const Earn = () => {
   const [claimedToday, setClaimedToday] = useState<Record<string, boolean>>({});
   const [offers, setOffers] = useState<Offer[]>([]);
+  const [sponsored, setSponsored] = useState<SponsoredOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("newest");
@@ -41,14 +55,16 @@ const Earn = () => {
   useEffect(() => {
     (async () => {
       const today = new Date().toISOString().slice(0, 10);
-      const [{ data: act }, { data: off }] = await Promise.all([
+      const [{ data: act }, { data: off }, { data: sp }] = await Promise.all([
         supabase.from("daily_activity").select("activity").eq("activity_date", today),
         supabase.from("offers").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
+        supabase.from("sponsored_offers").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
       ]);
       const map: Record<string, boolean> = {};
       (act ?? []).forEach((r) => (map[r.activity] = true));
       setClaimedToday(map);
       setOffers((off ?? []) as Offer[]);
+      setSponsored((sp ?? []) as SponsoredOffer[]);
       setLoading(false);
     })();
   }, []);

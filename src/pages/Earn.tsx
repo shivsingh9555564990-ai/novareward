@@ -267,69 +267,152 @@ const ActionTile = ({ to, badge, title, subtitle, icon, done, disabled, accent }
   );
 };
 
-const SPONSORED_URL = "https://omg10.com/4/10910510";
-const SPONSORED_REWARD = 25;
+// Visual style presets per animation_style. All colors are HSL design tokens.
+const SPONSOR_STYLES: Record<string, {
+  border: string;
+  borderAnim: string;
+  blobA: string;
+  blobB: string;
+  iconBg: string;
+  iconShadow: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  ctaBg: string;
+  shimmer: string;
+  badgeRing: string;
+  iconAnim: string;
+}> = {
+  aurora: {
+    border: "bg-[conic-gradient(from_0deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--coin)),hsl(var(--secondary)),hsl(var(--primary)))]",
+    borderAnim: "animate-spin-slow",
+    blobA: "bg-primary/40",
+    blobB: "bg-accent/30",
+    iconBg: "bg-gradient-primary",
+    iconShadow: "shadow-glow",
+    Icon: Flame,
+    ctaBg: "bg-gradient-primary/90",
+    shimmer: "bg-[linear-gradient(110deg,transparent_30%,hsl(var(--primary-foreground)/0.35)_50%,transparent_70%)]",
+    badgeRing: "border-primary/40 text-primary bg-primary/10",
+    iconAnim: "animate-glow-pulse",
+  },
+  neon: {
+    border: "bg-[conic-gradient(from_180deg,hsl(var(--accent)),hsl(var(--primary)),hsl(var(--accent)))]",
+    borderAnim: "animate-spin-slower",
+    blobA: "bg-accent/50",
+    blobB: "bg-primary/40",
+    iconBg: "bg-gradient-to-br from-accent to-primary",
+    iconShadow: "shadow-[0_0_30px_hsl(var(--accent)/0.6)]",
+    Icon: Zap,
+    ctaBg: "bg-gradient-to-r from-accent to-primary",
+    shimmer: "bg-[linear-gradient(110deg,transparent_30%,hsl(var(--accent-foreground)/0.4)_50%,transparent_70%)]",
+    badgeRing: "border-accent/40 text-accent bg-accent/10",
+    iconAnim: "animate-float-y",
+  },
+  sunset: {
+    border: "bg-[conic-gradient(from_45deg,hsl(var(--coin)),hsl(var(--secondary)),hsl(var(--primary)),hsl(var(--coin)))]",
+    borderAnim: "animate-spin-slow",
+    blobA: "bg-coin/40",
+    blobB: "bg-secondary/40",
+    iconBg: "bg-gradient-to-br from-coin to-secondary",
+    iconShadow: "shadow-[0_0_30px_hsl(var(--coin)/0.55)]",
+    Icon: Sparkles,
+    ctaBg: "bg-gradient-to-r from-coin to-secondary",
+    shimmer: "bg-[linear-gradient(110deg,transparent_30%,hsl(var(--coin-foreground)/0.45)_50%,transparent_70%)]",
+    badgeRing: "border-coin/40 text-coin bg-coin/10",
+    iconAnim: "animate-tilt",
+  },
+  ocean: {
+    border: "bg-[conic-gradient(from_90deg,hsl(var(--secondary)),hsl(var(--primary)),hsl(var(--accent)),hsl(var(--secondary)))]",
+    borderAnim: "animate-spin-slower",
+    blobA: "bg-secondary/40",
+    blobB: "bg-primary/30",
+    iconBg: "bg-gradient-to-br from-secondary to-primary",
+    iconShadow: "shadow-[0_0_30px_hsl(var(--secondary)/0.55)]",
+    Icon: Rocket,
+    ctaBg: "bg-gradient-to-r from-secondary to-primary",
+    shimmer: "bg-[linear-gradient(110deg,transparent_30%,hsl(var(--primary-foreground)/0.35)_50%,transparent_70%)]",
+    badgeRing: "border-secondary/40 text-secondary-foreground bg-secondary/20",
+    iconAnim: "animate-float-y",
+  },
+  gold: {
+    border: "bg-[conic-gradient(from_0deg,hsl(var(--coin)),hsl(45_95%_60%),hsl(var(--coin)),hsl(45_95%_60%))]",
+    borderAnim: "animate-spin-slow",
+    blobA: "bg-coin/50",
+    blobB: "bg-coin/30",
+    iconBg: "bg-gradient-to-br from-coin to-[hsl(45_95%_60%)]",
+    iconShadow: "shadow-[0_0_35px_hsl(var(--coin)/0.65)]",
+    Icon: Crown,
+    ctaBg: "bg-gradient-to-r from-coin to-[hsl(45_95%_60%)]",
+    shimmer: "bg-[linear-gradient(110deg,transparent_30%,hsl(var(--coin-foreground)/0.5)_50%,transparent_70%)]",
+    badgeRing: "border-coin/50 text-coin bg-coin/15",
+    iconAnim: "animate-glow-pulse",
+  },
+};
 
-const SponsoredTask = () => {
+const SponsoredTask = ({ offer, index }: { offer: SponsoredOffer; index: number }) => {
   const [opened, setOpened] = useState(false);
+  const style = SPONSOR_STYLES[offer.animation_style] ?? SPONSOR_STYLES.aurora;
+  const Icon = style.Icon;
   const handleOpen = () => {
     setOpened(true);
-    window.open(SPONSORED_URL, "_blank", "noopener,noreferrer");
+    window.open(offer.cta_url, "_blank", "noopener,noreferrer");
   };
   return (
     <button
       onClick={handleOpen}
-      className="group relative block w-full overflow-hidden rounded-3xl p-[1.5px] text-left transition-bounce active:scale-[0.98]"
+      style={{ animationDelay: `${index * 80}ms` }}
+      className="group relative block w-full overflow-hidden rounded-3xl p-[1.5px] text-left transition-bounce active:scale-[0.98] animate-slide-up"
     >
       {/* Animated gradient border */}
-      <span className="absolute inset-0 rounded-3xl bg-[conic-gradient(from_0deg,hsl(var(--primary)),hsl(var(--accent)),hsl(var(--coin)),hsl(var(--secondary)),hsl(var(--primary)))] opacity-90 animate-spin-slow [animation-duration:6s]" />
+      <span className={cn("absolute inset-[-30%] rounded-3xl opacity-90", style.border, style.borderAnim)} />
       <div className="relative rounded-[calc(1.5rem-1.5px)] bg-background/85 backdrop-blur-xl p-4 overflow-hidden">
         {/* Glow blobs */}
-        <div className="pointer-events-none absolute -top-16 -right-12 h-44 w-44 rounded-full bg-primary/40 blur-3xl animate-pulse" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-accent/30 blur-3xl animate-pulse [animation-delay:600ms]" />
+        <div className={cn("pointer-events-none absolute -top-16 -right-12 h-44 w-44 rounded-full blur-3xl animate-pulse", style.blobA)} />
+        <div className={cn("pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full blur-3xl animate-pulse [animation-delay:600ms]", style.blobB)} />
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
 
         <div className="relative flex items-start gap-3">
           <div className="relative shrink-0">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-primary blur-md opacity-80 animate-pulse" />
-            <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-glow">
-              <Flame className="h-6 w-6 text-primary-foreground" />
+            <div className={cn("absolute inset-0 rounded-2xl blur-md opacity-80", style.iconBg, style.iconAnim)} />
+            <div className={cn("relative flex h-14 w-14 items-center justify-center rounded-2xl", style.iconBg, style.iconShadow)}>
+              <Icon className="h-6 w-6 text-primary-foreground" />
             </div>
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="inline-flex items-center gap-1 rounded-full bg-coin/15 text-coin px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider border border-coin/30">
-                <Sparkles className="h-2.5 w-2.5" /> Featured
-              </span>
-              <span className="rounded-full bg-success/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success border border-success/30">Hot</span>
+              {offer.badge_label && (
+                <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider border", style.badgeRing)}>
+                  <span aria-hidden>{offer.badge_emoji ?? "✨"}</span> {offer.badge_label}
+                </span>
+              )}
+              <span className="rounded-full bg-success/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-success border border-success/30">Instant</span>
               <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent border border-accent/30">Sponsored</span>
             </div>
-            <h3 className="mt-1.5 text-base font-extrabold leading-tight">
-              Visit Sponsor & Earn Instantly
-            </h3>
-            <p className="text-[11px] text-muted-foreground leading-snug">
-              Tap to open partner offer · Stay 30s · Reward auto-credits
-            </p>
+            <h3 className="mt-1.5 text-base font-extrabold leading-tight">{offer.title}</h3>
+            {offer.subtitle && (
+              <p className="text-[11px] text-muted-foreground leading-snug">{offer.subtitle}</p>
+            )}
             <div className="mt-2 flex items-center gap-2">
-              <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                <Timer className="h-3 w-3" /> ~30s
-              </span>
+              {offer.duration_label && (
+                <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                  <Timer className="h-3 w-3" /> {offer.duration_label}
+                </span>
+              )}
               <span className="text-[10px] text-muted-foreground">·</span>
               <span className="flex items-center gap-0.5 text-[10px] text-coin">
-                {[0,1,2].map(i => <Star key={i} className="h-2.5 w-2.5 fill-coin text-coin" />)}
+                {[0, 1, 2].map((i) => <Star key={i} className="h-2.5 w-2.5 fill-coin text-coin" />)}
               </span>
             </div>
           </div>
 
           <div className="text-right shrink-0">
-            <div className="text-xl font-extrabold text-gradient-coin whitespace-nowrap">+{SPONSORED_REWARD}</div>
+            <div className="text-xl font-extrabold text-gradient-coin whitespace-nowrap">+{offer.reward}</div>
             <div className="text-[9px] uppercase tracking-wider text-muted-foreground">Nova</div>
           </div>
         </div>
 
-        <div className="relative mt-3 flex items-center justify-between rounded-2xl bg-gradient-primary/90 px-4 py-2.5 shadow-glow overflow-hidden">
-          <span className="absolute inset-0 bg-[linear-gradient(110deg,transparent_30%,hsl(var(--primary-foreground)/0.35)_50%,transparent_70%)] -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        <div className={cn("relative mt-3 flex items-center justify-between rounded-2xl px-4 py-2.5 shadow-glow overflow-hidden", style.ctaBg)}>
+          <span className={cn("absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000", style.shimmer)} />
           <span className="relative text-xs font-extrabold uppercase tracking-wider text-primary-foreground">
             {opened ? "Reopen Offer" : "Start Task Now"}
           </span>

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { getDeviceFp } from "@/lib/deviceFp";
 
 type AuthContextType = {
   session: Session | null;
@@ -27,6 +28,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       setLoading(false);
+      // Apply pending referral code (deferred to avoid blocking auth callback)
+      if (newSession?.user) {
+        setTimeout(() => applyPendingReferral(), 0);
+      }
     });
 
     // 2. THEN check for existing session

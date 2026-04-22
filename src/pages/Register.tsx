@@ -182,6 +182,27 @@ const Register = () => {
               </button>
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="referral">
+              Referral Code <span className="text-muted-foreground font-normal">(optional)</span>
+            </Label>
+            <div className="relative">
+              <Gift className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-coin" />
+              <Input
+                id="referral"
+                placeholder="ABCD1234"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 8))}
+                className="pl-11 h-12 rounded-2xl uppercase tracking-wider"
+                maxLength={8}
+              />
+            </div>
+            {referralCode && (
+              <p className="text-[11px] text-success flex items-center gap-1">
+                <Gift className="w-3 h-3" /> Aapko +25 NC welcome bonus milega friend ki first earning par.
+              </p>
+            )}
+          </div>
           <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
             {loading ? "Creating..." : "Create Account"}
           </Button>

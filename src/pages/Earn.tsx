@@ -124,6 +124,11 @@ const Earn = () => {
         </div>
       </section>
 
+      {/* Sponsored / Special Task */}
+      <section className="mt-6 px-4">
+        <SponsoredTask />
+      </section>
+
       {/* Offers list */}
       <section className="mt-5 px-4">
         <div className="mb-3 flex items-end justify-between">

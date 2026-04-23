@@ -76,6 +76,7 @@ const LuckyDice = () => {
     }
     setReward(res.reward);
     toast.success(`+${res.reward} NC credited! 🎉`);
+    setCreditTick((t) => t + 1);
     setPhase("done");
   };
 
@@ -115,8 +116,15 @@ const LuckyDice = () => {
 
         {phase === "idle" && (
           <>
-            <Button onClick={roll} variant="hero" size="lg" className="w-full">
-              <Dices className="h-4 w-4" /> Roll Dice
+            <Button
+              onClick={roll}
+              variant="hero"
+              size="lg"
+              className="w-full"
+              disabled={buttonDisabled}
+            >
+              <Dices className="h-4 w-4" />
+              {used ? "Already Played Today" : "Roll Dice"}
             </Button>
             <p className="text-center text-[11px] text-muted-foreground">
               Reward: 1–5 NC based on roll · 1 roll per day
@@ -134,6 +142,7 @@ const LuckyDice = () => {
               <p className="text-3xl font-extrabold text-gradient-coin">+{reward} NC</p>
               <p className="text-[11px] text-muted-foreground mt-2">Kal phir roll karo!</p>
             </div>
+            <CreditLog source="lucky_dice" pollKey={creditTick} />
             <Link to="/games" className="block">
               <Button variant="hero" size="lg" className="w-full">Back to Games</Button>
             </Link>

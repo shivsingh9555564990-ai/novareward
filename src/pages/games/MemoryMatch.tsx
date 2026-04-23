@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import AdSlot from "@/components/AdSlot";
+import CreditLog from "@/components/CreditLog";
 import { cn } from "@/lib/utils";
 
 const EMOJIS = ["🚀", "💎", "🔥", "⭐", "🎯", "🎮"];

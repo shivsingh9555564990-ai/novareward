@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
@@ -29,14 +29,7 @@ const Interests = () => {
   const [loading, setLoading] = useState(false);
 
   // Skip if user already finished onboarding once.
-  useState(() => {
-    // noop, real check below in useEffect
-  });
-
-  // Use a real effect to redirect already-onboarded users.
-  // (kept lightweight — single query)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffectOnce(() => {
+  useEffect(() => {
     if (authLoading || !user) return;
     supabase
       .from("profiles")
@@ -46,7 +39,7 @@ const Interests = () => {
       .then(({ data }) => {
         if (data?.onboarded) navigate("/home", { replace: true });
       });
-  }, [user, authLoading]);
+  }, [user, authLoading, navigate]);
 
   const toggle = (id: string) =>
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));

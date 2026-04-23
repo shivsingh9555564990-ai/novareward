@@ -140,7 +140,7 @@ const Register = () => {
 
   // Build a login URL that pre-fills the previously-used email when known.
   const loginHref = deviceWarning?.emailHint
-    ? `/login?email=${encodeURIComponent(deviceWarning.emailHint)}`
+    ? `/login?email_hint=${encodeURIComponent(deviceWarning.emailHint)}`
     : "/login";
 
   // When this device is already linked, show ONLY the warning card —
@@ -162,7 +162,7 @@ const Register = () => {
                     <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                       Registered email
                     </p>
-                    <p className="font-mono text-sm font-bold text-foreground break-all">
+                <p className="font-mono text-sm font-bold leading-relaxed text-foreground break-all">
                       {deviceWarning.emailHint}
                     </p>
                   </div>

@@ -118,9 +118,14 @@ const Register = () => {
   };
 
   const handleGoogle = async () => {
+    if (deviceWarning) {
+      toast.error("Is device pe pehle se account hai. Login screen pe Google use karo.", { duration: 6000 });
+      setTimeout(() => navigate("/login", { replace: true }), 1500);
+      return;
+    }
     if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/home`,
+      redirect_uri: `${window.location.origin}/auth/callback`,
     });
     if (result.error) {
       toast.error(result.error.message || "Google sign-in failed");
@@ -134,6 +139,18 @@ const Register = () => {
 
   return (
     <AuthLayout title="Create Account" subtitle="कुछ ही seconds में join करें और earning शुरू करें" back="/onboarding">
+      {deviceWarning && (
+        <div className="mb-5 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 flex gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div className="space-y-2 text-sm">
+            <p className="font-semibold text-destructive">Account already exists</p>
+            <p className="text-muted-foreground text-xs">{deviceWarning}</p>
+            <Link to="/login" className="inline-block text-xs font-bold text-primary underline">
+              Go to Login →
+            </Link>
+          </div>
+        </div>
+      )}
       {/* Mode Toggle */}
       <div className="flex bg-muted rounded-full p-1 mb-6">
         <button

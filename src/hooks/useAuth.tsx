@@ -43,13 +43,29 @@ const maskEmail = (email?: string | null) => {
   return `${head}${"*".repeat(Math.max(1, user.length - 2))}@${domain}`;
 };
 
-const registerDevice = async (user: User) => {
+/**
+ * Enforce one-device = one-account.
+ * Returns { blocked: true, emailHint } if the device already belongs
+ * to another account, otherwise registers/links the device.
+ */
+const enforceDeviceLink = async (
+  user: User
+): Promise<{ blocked: boolean; emailHint: string | null }> => {
   try {
     const fp = getDeviceFp();
     const hint = maskEmail(user.email);
-    await supabase.rpc("register_device_signup", { p_device_fp: fp, p_email_hint: hint });
+    const { data, error } = await supabase.rpc("enforce_device_single_account", {
+      p_device_fp: fp,
+      p_email_hint: hint,
+    });
+    if (error) return { blocked: false, emailHint: null };
+    const res = data as any;
+    if (res?.status === "blocked") {
+      return { blocked: true, emailHint: res.email_hint ?? null };
+    }
+    return { blocked: false, emailHint: null };
   } catch {
-    // ignore — non-critical
+    return { blocked: false, emailHint: null };
   }
 };
 
@@ -64,12 +80,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       setLoading(false);
-      // Apply pending referral + register device (deferred to avoid blocking auth callback)
+      // Enforce one-device-one-account; apply pending referral if allowed.
       if (newSession?.user) {
         const u = newSession.user;
-        setTimeout(() => {
+        setTimeout(async () => {
+          const check = await enforceDeviceLink(u);
+          if (check.blocked) {
+            // Sign the freshly-created account out and bounce to login with a clear message.
+            await supabase.auth.signOut();
+            const params = new URLSearchParams({ device_blocked: "1" });
+            if (check.emailHint) params.set("email", check.emailHint);
+            // Use replace to avoid back-button returning to a half-authed state.
+            window.location.replace(`/login?${params.toString()}`);
+            return;
+          }
           applyPendingReferral();
-          registerDevice(u);
         }, 0);
       }
     });

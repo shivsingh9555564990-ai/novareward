@@ -39,17 +39,15 @@ const maskEmail = (email?: string | null) => {
   if (!email) return null;
   const [user, domain] = email.split("@");
   if (!domain) return email;
-  // Show first 2 chars + masked middle + last 5 chars before "@" so the
-  // user can clearly recognise which email was used to register.
-  // e.g.  shubham.kumar99@gmail.com  ->  sh*******mar99@gmail.com
-  if (user.length <= 7) {
-    // Too short to safely reveal 5 trailing chars — fall back to first 2 only.
-    const head = user.slice(0, 2);
-    return `${head}${"*".repeat(Math.max(1, user.length - 2))}@${domain}`;
-  }
+  if (user.length <= 2) return email;
+
   const head = user.slice(0, 2);
+  if (user.length <= 7) {
+    return `${head}${user.slice(2)}@${domain}`;
+  }
+
   const tail = user.slice(-5);
-  const maskedLen = Math.max(1, user.length - 2 - 5);
+  const maskedLen = Math.max(1, user.length - 7);
   return `${head}${"*".repeat(maskedLen)}${tail}@${domain}`;
 };
 
@@ -99,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Sign the freshly-created account out and bounce to login with a clear message.
             await supabase.auth.signOut();
             const params = new URLSearchParams({ device_blocked: "1" });
-            if (check.emailHint) params.set("email", check.emailHint);
+            if (check.emailHint) params.set("email_hint", check.emailHint);
             // Use replace to avoid back-button returning to a half-authed state.
             window.location.replace(`/login?${params.toString()}`);
             return;

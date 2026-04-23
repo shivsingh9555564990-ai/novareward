@@ -32,16 +32,15 @@ const LuckyDice = () => {
       .select("id", { count: "exact", head: true })
       .eq("game", "lucky_dice")
       .eq("play_date", today)
-      .then(({ count }) => setRemaining(5 - (count ?? 0)));
+      .then(({ count }) => setRemaining(1 - (count ?? 0)));
   }, [user, phase]);
 
   const roll = async () => {
     if (remaining !== null && remaining <= 0) {
-      toast.error("Aaj ki 5 plays khatam. Kal aana!");
+      toast.error("Aaj ka ek roll khatam. Kal aana!");
       return;
     }
     setPhase("rolling");
-    // Animate roll
     let ticks = 0;
     const interval = window.setInterval(() => {
       setD1(Math.floor(Math.random() * 6));
@@ -85,7 +84,7 @@ const LuckyDice = () => {
           <h1 className="text-2xl font-extrabold"><span className="text-gradient-neon">Lucky Dice</span></h1>
         </div>
         <div className="ml-auto rounded-full border border-coin/40 bg-coin/10 px-3 py-1 text-[10px] font-bold uppercase text-coin">
-          {remaining ?? "–"} / 5 left
+          {remaining ?? "–"} / 1 left
         </div>
       </header>
 
@@ -110,9 +109,14 @@ const LuckyDice = () => {
         </div>
 
         {phase === "idle" && (
-          <Button onClick={roll} variant="hero" size="lg" className="w-full">
-            <Dices className="h-4 w-4" /> Roll Dice
-          </Button>
+          <>
+            <Button onClick={roll} variant="hero" size="lg" className="w-full">
+              <Dices className="h-4 w-4" /> Roll Dice
+            </Button>
+            <p className="text-center text-[11px] text-muted-foreground">
+              Reward: 1–5 NC based on roll · 1 roll per day
+            </p>
+          </>
         )}
         {phase === "rolling" && (
           <p className="text-center text-sm text-muted-foreground animate-pulse">Rolling…</p>

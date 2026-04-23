@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Mail, Coins } from "lucide-react";
+import { LogOut, Mail, Coins, Fingerprint } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { formatRupees } from "@/lib/nova";
@@ -70,6 +70,14 @@ const Profile = () => {
             {formatRupees(profile?.coins ?? 0)}
           </p>
         </div>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => navigate("/debug/device")}
+        >
+          <Fingerprint className="w-4 h-4" /> Device & Anti-Fraud
+        </Button>
 
         <Button
           variant="outline"

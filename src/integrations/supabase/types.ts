@@ -44,6 +44,30 @@ export type Database = {
         }
         Relationships: []
       }
+      device_signups: {
+        Row: {
+          created_at: string
+          device_fp: string
+          email_hint: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_fp: string
+          email_hint?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_fp?: string
+          email_hint?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -744,6 +768,7 @@ export type Database = {
         Returns: Json
       }
       cancel_friend_request: { Args: { p_request_id: string }; Returns: Json }
+      check_device_signup: { Args: { p_device_fp: string }; Returns: Json }
       claim_daily_activity: {
         Args: { p_activity: string; p_meta?: Json; p_reward: number }
         Returns: Json
@@ -814,6 +839,10 @@ export type Database = {
       }
       play_game: {
         Args: { p_device_fp: string; p_game: string; p_score: number }
+        Returns: Json
+      }
+      register_device_signup: {
+        Args: { p_device_fp: string; p_email_hint: string }
         Returns: Json
       }
       remove_friend: { Args: { p_other: string }; Returns: Json }

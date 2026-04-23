@@ -25,7 +25,7 @@ const GAMES: Game[] = [
   { to: "/scratch", title: "Scratch Card", desc: "Reveal & win", reward: "1–3 NC", difficulty: 1, icon: <Sparkles className="h-5 w-5" />, badge: iconScratch, free: true, accent: "from-secondary/40 to-primary/30" },
   { to: "/games/tap-coin", title: "Tap the Coin", desc: "15s tap rush · daily 5×", reward: "+1 NC", difficulty: 1, icon: <Zap className="h-5 w-5" />, free: true, accent: "from-coin/30 to-accent/30" },
   { to: "/games/memory-match", title: "Memory Match", desc: "Match pairs · daily 5×", reward: "+1 NC", difficulty: 2, icon: <Puzzle className="h-5 w-5" />, free: true, accent: "from-accent/30 to-primary/30" },
-  { to: "/games/lucky-dice", title: "Lucky Dice", desc: "Roll & win · daily 5×", reward: "+1 NC", difficulty: 1, icon: <Dices className="h-5 w-5" />, free: true, accent: "from-secondary/30 to-coin/30" },
+  { to: "/games/lucky-dice", title: "Lucky Dice", desc: "Roll & win · 1× per day", reward: "1–5 NC", difficulty: 1, icon: <Dices className="h-5 w-5" />, free: true, accent: "from-secondary/30 to-coin/30" },
 ];
 
 const Games = () => {

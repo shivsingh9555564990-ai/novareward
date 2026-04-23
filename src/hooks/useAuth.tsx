@@ -25,16 +25,31 @@ const applyPendingReferral = async () => {
     const { data, error } = await supabase.rpc("apply_referral_code", { p_code: code, p_device_fp: fp });
     if (error) return;
     const res = data as any;
-    // Always clear after attempt — success or expected failure (already_referred, self, device_used).
-    // This prevents retry loops on every login.
     localStorage.removeItem("pending_ref");
     if (res?.success) {
-      // toast import would create circular; rely on Refer page UI.
       // eslint-disable-next-line no-console
       console.log("Referral linked:", res.message);
     }
   } catch {
     // ignore
+  }
+};
+
+const maskEmail = (email?: string | null) => {
+  if (!email) return null;
+  const [user, domain] = email.split("@");
+  if (!domain) return email;
+  const head = user.slice(0, 2);
+  return `${head}${"*".repeat(Math.max(1, user.length - 2))}@${domain}`;
+};
+
+const registerDevice = async (user: User) => {
+  try {
+    const fp = getDeviceFp();
+    const hint = maskEmail(user.email);
+    await supabase.rpc("register_device_signup", { p_device_fp: fp, p_email_hint: hint });
+  } catch {
+    // ignore — non-critical
   }
 };
 
@@ -49,9 +64,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
       setLoading(false);
-      // Apply pending referral code (deferred to avoid blocking auth callback)
+      // Apply pending referral + register device (deferred to avoid blocking auth callback)
       if (newSession?.user) {
-        setTimeout(() => applyPendingReferral(), 0);
+        const u = newSession.user;
+        setTimeout(() => {
+          applyPendingReferral();
+          registerDevice(u);
+        }, 0);
       }
     });
 

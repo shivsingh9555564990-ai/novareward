@@ -4,9 +4,10 @@ import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, User, Lock, Eye, EyeOff, Gift } from "lucide-react";
+import { Mail, Phone, User, Lock, Eye, EyeOff, Gift, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { getDeviceFp } from "@/lib/deviceFp";
 import { toast } from "sonner";
 
 const Register = () => {
@@ -20,6 +21,7 @@ const Register = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [deviceWarning, setDeviceWarning] = useState<string | null>(null);
 
   useEffect(() => {
     const ref = params.get("ref");
@@ -33,8 +35,31 @@ const Register = () => {
     }
   }, [params]);
 
+  // Check device fingerprint on mount — does this device already have an account?
+  useEffect(() => {
+    (async () => {
+      try {
+        const fp = getDeviceFp();
+        const { data } = await supabase.rpc("check_device_signup", { p_device_fp: fp });
+        const res = data as any;
+        if (res?.exists) {
+          setDeviceWarning(
+            res.email_hint
+              ? `Is device se already account bana hai (${res.email_hint}). Usi email se login karo.`
+              : "Is device se already ek account bana hai. Pehle wale account se login karo."
+          );
+        }
+      } catch { /* ignore */ }
+    })();
+  }, []);
+
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (deviceWarning) {
+      toast.error("Is device pe pehle se account hai. Login karo.", { duration: 6000 });
+      setTimeout(() => navigate("/login", { replace: true }), 1500);
+      return;
+    }
     if (password.length < 6) {
       toast.error("Password कम से कम 6 characters का हो");
       return;
@@ -93,9 +118,14 @@ const Register = () => {
   };
 
   const handleGoogle = async () => {
+    if (deviceWarning) {
+      toast.error("Is device pe pehle se account hai. Login screen pe Google use karo.", { duration: 6000 });
+      setTimeout(() => navigate("/login", { replace: true }), 1500);
+      return;
+    }
     if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/home`,
+      redirect_uri: `${window.location.origin}/auth/callback`,
     });
     if (result.error) {
       toast.error(result.error.message || "Google sign-in failed");
@@ -109,6 +139,18 @@ const Register = () => {
 
   return (
     <AuthLayout title="Create Account" subtitle="कुछ ही seconds में join करें और earning शुरू करें" back="/onboarding">
+      {deviceWarning && (
+        <div className="mb-5 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 flex gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+          <div className="space-y-2 text-sm">
+            <p className="font-semibold text-destructive">Account already exists</p>
+            <p className="text-muted-foreground text-xs">{deviceWarning}</p>
+            <Link to="/login" className="inline-block text-xs font-bold text-primary underline">
+              Go to Login →
+            </Link>
+          </div>
+        </div>
+      )}
       {/* Mode Toggle */}
       <div className="flex bg-muted rounded-full p-1 mb-6">
         <button

@@ -126,15 +126,18 @@ const Register = () => {
     }
     if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
+      redirect_uri: window.location.origin,
     });
     if (result.error) {
       toast.error(result.error.message || "Google sign-in failed");
       return;
     }
     if (!result.redirected) {
+      const { routeAfterAuth } = await import("@/lib/routeAfterAuth");
+      const { data } = await supabase.auth.getSession();
+      const dest = data.session?.user ? await routeAfterAuth(data.session.user.id) : "/home";
       toast.success("Welcome! 🎉");
-      navigate("/home", { replace: true });
+      navigate(dest, { replace: true });
     }
   };
 

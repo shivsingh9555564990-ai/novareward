@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { routeAfterAuth } from "@/lib/routeAfterAuth";
 import novaLogo from "@/assets/nova-logo.png";
 
 const Splash = () => {
@@ -8,12 +9,17 @@ const Splash = () => {
   const { user, loading } = useAuth();
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    const t = setTimeout(async () => {
       if (loading) return;
       const seenOnboarding = localStorage.getItem("novarewards-onboarded");
-      if (user) navigate("/home", { replace: true });
-      else if (seenOnboarding) navigate("/login", { replace: true });
-      else navigate("/onboarding", { replace: true });
+      if (user) {
+        const dest = await routeAfterAuth(user.id);
+        navigate(dest, { replace: true });
+      } else if (seenOnboarding) {
+        navigate("/login", { replace: true });
+      } else {
+        navigate("/onboarding", { replace: true });
+      }
     }, 2200);
     return () => clearTimeout(t);
   }, [navigate, user, loading]);

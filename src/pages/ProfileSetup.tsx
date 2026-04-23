@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "lucide-react";
+import { User, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,10 +13,40 @@ const AVATARS = ["🦊", "🐼", "🦁", "🐯", "🐸", "🦄", "🐵", "🐧"]
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState(AVATARS[0]);
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  // Skip this screen if the user has already finished setup once.
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) {
+      navigate("/login", { replace: true });
+      return;
+    }
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("full_name, avatar_url, onboarded")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (data?.onboarded) {
+        navigate("/home", { replace: true });
+        return;
+      }
+      if (data?.full_name && data?.avatar_url) {
+        navigate("/interests", { replace: true });
+        return;
+      }
+      // Pre-fill from any existing data / OAuth metadata
+      if (data?.full_name) setName(data.full_name);
+      else if (user.user_metadata?.full_name) setName(user.user_metadata.full_name);
+      if (data?.avatar_url) setAvatar(data.avatar_url);
+      setChecking(false);
+    })();
+  }, [user, authLoading, navigate]);
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();

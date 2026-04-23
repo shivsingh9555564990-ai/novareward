@@ -21,7 +21,7 @@ const Register = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [deviceWarning, setDeviceWarning] = useState<string | null>(null);
+  const [deviceWarning, setDeviceWarning] = useState<{ message: string; emailHint: string | null } | null>(null);
 
   useEffect(() => {
     const ref = params.get("ref");
@@ -43,11 +43,12 @@ const Register = () => {
         const { data } = await supabase.rpc("check_device_signup", { p_device_fp: fp });
         const res = data as any;
         if (res?.exists) {
-          setDeviceWarning(
-            res.email_hint
-              ? `Is device se already account bana hai (${res.email_hint}). Usi email se login karo.`
-              : "Is device se already ek account bana hai. Pehle wale account se login karo."
-          );
+          setDeviceWarning({
+            message: res.email_hint
+              ? `Is device se already account hai. Wahi email use karo:`
+              : "Is device se already ek account bana hai. Pehle wale account se login karo.",
+            emailHint: res.email_hint ?? null,
+          });
         }
       } catch { /* ignore */ }
     })();
@@ -137,18 +138,32 @@ const Register = () => {
     }
   };
 
+  // Build a login URL that pre-fills the previously-used email when known.
+  const loginHref = deviceWarning?.emailHint
+    ? `/login?email=${encodeURIComponent(deviceWarning.emailHint)}`
+    : "/login";
+
   return (
     <AuthLayout title="Create Account" subtitle="कुछ ही seconds में join करें और earning शुरू करें" back="/onboarding">
       {deviceWarning && (
-        <div className="mb-5 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 flex gap-3">
-          <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold text-destructive">Account already exists</p>
-            <p className="text-muted-foreground text-xs">{deviceWarning}</p>
-            <Link to="/login" className="inline-block text-xs font-bold text-primary underline">
-              Go to Login →
-            </Link>
+        <div className="mb-5 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 space-y-3">
+          <div className="flex gap-3">
+            <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+            <div className="space-y-1 text-sm flex-1">
+              <p className="font-semibold text-destructive">Account already exists on this device</p>
+              <p className="text-muted-foreground text-xs">{deviceWarning.message}</p>
+              {deviceWarning.emailHint && (
+                <p className="font-mono text-sm font-bold text-foreground bg-background/60 rounded-lg px-3 py-2 mt-2 inline-block">
+                  {deviceWarning.emailHint}
+                </p>
+              )}
+            </div>
           </div>
+          <Link to={loginHref} className="block">
+            <Button variant="hero" size="sm" className="w-full">
+              Go to Login{deviceWarning.emailHint ? ` as ${deviceWarning.emailHint}` : ""} →
+            </Button>
+          </Link>
         </div>
       )}
       {/* Mode Toggle */}

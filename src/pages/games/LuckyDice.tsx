@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import AdSlot from "@/components/AdSlot";
+import CreditLog from "@/components/CreditLog";
 
 const FACES = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
 
@@ -19,6 +20,10 @@ const LuckyDice = () => {
   const [d2, setD2] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [reward, setReward] = useState(0);
+  const [creditTick, setCreditTick] = useState(0);
+
+  const used = remaining !== null && remaining <= 0;
+  const buttonDisabled = used || phase !== "idle";
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });
@@ -71,6 +76,7 @@ const LuckyDice = () => {
     }
     setReward(res.reward);
     toast.success(`+${res.reward} NC credited! 🎉`);
+    setCreditTick((t) => t + 1);
     setPhase("done");
   };
 
@@ -110,8 +116,15 @@ const LuckyDice = () => {
 
         {phase === "idle" && (
           <>
-            <Button onClick={roll} variant="hero" size="lg" className="w-full">
-              <Dices className="h-4 w-4" /> Roll Dice
+            <Button
+              onClick={roll}
+              variant="hero"
+              size="lg"
+              className="w-full"
+              disabled={buttonDisabled}
+            >
+              <Dices className="h-4 w-4" />
+              {used ? "Already Played Today" : "Roll Dice"}
             </Button>
             <p className="text-center text-[11px] text-muted-foreground">
               Reward: 1–5 NC based on roll · 1 roll per day
@@ -129,6 +142,7 @@ const LuckyDice = () => {
               <p className="text-3xl font-extrabold text-gradient-coin">+{reward} NC</p>
               <p className="text-[11px] text-muted-foreground mt-2">Kal phir roll karo!</p>
             </div>
+            <CreditLog source="lucky_dice" pollKey={creditTick} />
             <Link to="/games" className="block">
               <Button variant="hero" size="lg" className="w-full">Back to Games</Button>
             </Link>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import AdSlot from "@/components/AdSlot";
+import CreditLog from "@/components/CreditLog";
 import { cn } from "@/lib/utils";
 
 const EMOJIS = ["🚀", "💎", "🔥", "⭐", "🎯", "🎮"];
@@ -30,6 +31,7 @@ const MemoryMatch = () => {
   const [moves, setMoves] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [reward, setReward] = useState(0);
+  const [creditTick, setCreditTick] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });
@@ -101,6 +103,7 @@ const MemoryMatch = () => {
     }
     setReward(res.reward);
     toast.success(`+${res.reward} NC credited! 🎉`);
+    setCreditTick((t) => t + 1);
     setPhase("done");
   };
 
@@ -172,6 +175,7 @@ const MemoryMatch = () => {
               <p className="text-3xl font-extrabold text-gradient-coin">+{reward} NC</p>
               <p className="text-xs text-muted-foreground mt-1">{moves} moves</p>
             </div>
+            <CreditLog source="memory_match" pollKey={creditTick} />
             <Button onClick={start} variant="hero" size="lg" className="w-full">Play Again</Button>
           </div>
         )}

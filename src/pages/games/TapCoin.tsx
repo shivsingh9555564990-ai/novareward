@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import AdSlot from "@/components/AdSlot";
+import CreditLog from "@/components/CreditLog";
 
 const DURATION = 15; // seconds — short rush, 1 NC reward
 
@@ -19,6 +20,7 @@ const TapCoin = () => {
   const [time, setTime] = useState(DURATION);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [reward, setReward] = useState(0);
+  const [creditTick, setCreditTick] = useState(0);
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -70,6 +72,7 @@ const TapCoin = () => {
     }
     setReward(res.reward);
     toast.success(`+${res.reward} NC credited! 🎉`);
+    setCreditTick((t) => t + 1);
     setPhase("done");
   };
 
@@ -143,6 +146,7 @@ const TapCoin = () => {
               <p className="text-3xl font-extrabold text-gradient-coin">+{reward} NC</p>
               <p className="text-xs text-muted-foreground mt-1">{taps} taps in {DURATION}s</p>
             </div>
+            <CreditLog source="tap_coin" pollKey={creditTick} />
             <Button onClick={() => setPhase("idle")} variant="hero" size="lg" className="w-full">Play Again</Button>
           </div>
         )}

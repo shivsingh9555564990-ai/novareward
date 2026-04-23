@@ -4,6 +4,7 @@ import { ArrowLeft, Brain, CheckCircle2, Clock, Share2, Trophy, XCircle } from "
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import AdSlot from "@/components/AdSlot";
+import CreditLog from "@/components/CreditLog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -196,6 +197,10 @@ const Quiz = () => {
               <span className="font-bold text-gradient-coin">+{score} NC</span>
             </div>
             <p className="mt-2 text-[10px] text-muted-foreground">Daily limit: 1 quiz per day</p>
+          </div>
+
+          <div className="mt-3 w-full max-w-sm">
+            <CreditLog source="quiz" pollKey={reward} />
           </div>
 
           <div className="mt-6 w-full max-w-sm space-y-2">

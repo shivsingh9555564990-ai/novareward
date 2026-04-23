@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthLayout } from "@/components/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,17 @@ import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Pre-fill email when redirected from Register's device-conflict warning.
+  useEffect(() => {
+    const e = params.get("email");
+    if (e) setEmail(e);
+  }, [params]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

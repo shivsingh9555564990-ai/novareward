@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Phone, User, Lock, Eye, EyeOff, Gift, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { getDeviceFp } from "@/lib/deviceFp";
 import { toast } from "sonner";
 
@@ -125,20 +124,18 @@ const Register = () => {
       return;
     }
     if (referralCode.trim()) localStorage.setItem("pending_ref", referralCode.trim().toUpperCase());
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    // Direct Supabase OAuth — works on Vercel/Netlify/custom domains without /~oauth proxy.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: { prompt: "select_account" },
+      },
     });
-    if (result.error) {
-      toast.error(result.error.message || "Google sign-in failed");
-      return;
+    if (error) {
+      toast.error(error.message || "Google sign-in failed");
     }
-    if (!result.redirected) {
-      const { routeAfterAuth } = await import("@/lib/routeAfterAuth");
-      const { data } = await supabase.auth.getSession();
-      const dest = data.session?.user ? await routeAfterAuth(data.session.user.id) : "/home";
-      toast.success("Welcome! 🎉");
-      navigate(dest, { replace: true });
-    }
+    // Browser will redirect to Google.
   };
 
   // Build a login URL that pre-fills the previously-used email when known.

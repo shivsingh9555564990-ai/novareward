@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { routeAfterAuth } from "@/lib/routeAfterAuth";
 import { toast } from "sonner";
 
@@ -48,20 +47,19 @@ const Login = () => {
   };
 
   const handleGoogle = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    // Direct Supabase OAuth — works on ANY host (Vercel, Netlify, custom domains).
+    // Supabase redirects user to Google, then back to /auth/callback on this domain.
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: { prompt: "select_account" },
+      },
     });
-    if (result.error) {
-      toast.error(result.error.message || "Google sign-in failed");
-      return;
+    if (error) {
+      toast.error(error.message || "Google sign-in failed");
     }
-    if (!result.redirected) {
-      // Tokens already set — figure out where to go based on profile state.
-      const { data } = await supabase.auth.getSession();
-      const dest = data.session?.user ? await routeAfterAuth(data.session.user.id) : "/home";
-      toast.success("Welcome! 🎉");
-      navigate(dest, { replace: true });
-    }
+    // Browser will redirect to Google — no further code runs here.
   };
 
   return (

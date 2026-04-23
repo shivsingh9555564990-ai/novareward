@@ -20,6 +20,10 @@ const LuckyDice = () => {
   const [d2, setD2] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [reward, setReward] = useState(0);
+  const [creditTick, setCreditTick] = useState(0);
+
+  const used = remaining !== null && remaining <= 0;
+  const buttonDisabled = used || phase !== "idle";
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });

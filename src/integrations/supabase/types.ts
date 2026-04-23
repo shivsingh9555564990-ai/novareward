@@ -818,6 +818,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_my_device_status: { Args: { p_device_fp: string }; Returns: Json }
       get_user_profile: { Args: { p_user_id: string }; Returns: Json }
       list_friend_requests: {
         Args: { p_box?: string }

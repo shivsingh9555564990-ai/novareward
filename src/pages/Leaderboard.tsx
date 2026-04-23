@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Crown, Medal, Sparkles, Trophy, Coins, TrendingUp, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +17,7 @@ interface Row {
 
 const Leaderboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [me, setMe] = useState<{ name: string; coins: number; rank: number } | null>(null);
@@ -149,7 +150,12 @@ const Leaderboard = () => {
                 {rest.map((u) => {
                   const avatar = u.avatar_url || avatars[(u.rank - 1) % avatars.length];
                   return (
-                    <Link to={`/u/${u.user_id}`} key={u.user_id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/30 active:scale-[0.99] transition-bounce">
+                    <button
+                      type="button"
+                      key={u.user_id}
+                      onClick={() => navigate(`/u/${u.user_id}`)}
+                      className="w-full text-left flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/30 active:scale-[0.99] transition-bounce"
+                    >
                       <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-[11px] font-bold text-muted-foreground">
                         #{u.rank}
                       </div>
@@ -162,7 +168,7 @@ const Leaderboard = () => {
                       <p className="text-coin font-extrabold text-sm flex items-center gap-1 tabular-nums">
                         <Coins className="h-3.5 w-3.5" /> {u.coins.toLocaleString()}
                       </p>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>

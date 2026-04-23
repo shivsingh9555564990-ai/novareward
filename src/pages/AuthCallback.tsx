@@ -79,11 +79,17 @@ const AuthCallback = () => {
           return;
         }
 
-        // signup / magiclink / email_change / invite → continue into app
+        // signup / magiclink / email_change / invite / oauth → continue into app
         const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          toast.success("✅ Email verified! Welcome 🎉");
-          navigate("/profile-setup", { replace: true });
+        if (data.session?.user) {
+          const { routeAfterAuth } = await import("@/lib/routeAfterAuth");
+          const dest = await routeAfterAuth(data.session.user.id);
+          if (dest === "/home") {
+            toast.success("Welcome back! 🎉");
+          } else {
+            toast.success("✅ Verified! Welcome 🎉");
+          }
+          navigate(dest, { replace: true });
         } else {
           toast.success("✅ Email verified! कृपया login करें।");
           navigate("/login", { replace: true });

@@ -21,6 +21,7 @@ const Register = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [deviceWarning, setDeviceWarning] = useState<string | null>(null);
 
   useEffect(() => {
     const ref = params.get("ref");
@@ -34,8 +35,31 @@ const Register = () => {
     }
   }, [params]);
 
+  // Check device fingerprint on mount — does this device already have an account?
+  useEffect(() => {
+    (async () => {
+      try {
+        const fp = getDeviceFp();
+        const { data } = await supabase.rpc("check_device_signup", { p_device_fp: fp });
+        const res = data as any;
+        if (res?.exists) {
+          setDeviceWarning(
+            res.email_hint
+              ? `Is device se already account bana hai (${res.email_hint}). Usi email se login karo.`
+              : "Is device se already ek account bana hai. Pehle wale account se login karo."
+          );
+        }
+      } catch { /* ignore */ }
+    })();
+  }, []);
+
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (deviceWarning) {
+      toast.error("Is device pe pehle se account hai. Login karo.", { duration: 6000 });
+      setTimeout(() => navigate("/login", { replace: true }), 1500);
+      return;
+    }
     if (password.length < 6) {
       toast.error("Password कम से कम 6 characters का हो");
       return;

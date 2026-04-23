@@ -17,10 +17,18 @@ const Login = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Pre-fill email when redirected from Register's device-conflict warning.
+  // Pre-fill email when redirected from Register's device-conflict warning,
+  // and surface a clear message if the user was bounced from a blocked Google signup.
   useEffect(() => {
     const e = params.get("email");
     if (e) setEmail(e);
+    if (params.get("device_blocked") === "1") {
+      const hint = e ? ` (${e})` : "";
+      toast.error(
+        `⚠️ Is device pe pehle se ek account hai${hint}. Naya account allowed nahi — wahi email se login karo.`,
+        { duration: 9000 }
+      );
+    }
   }, [params]);
 
   const handleLogin = async (e: React.FormEvent) => {

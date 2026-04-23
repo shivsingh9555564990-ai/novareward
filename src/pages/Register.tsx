@@ -143,29 +143,49 @@ const Register = () => {
     ? `/login?email=${encodeURIComponent(deviceWarning.emailHint)}`
     : "/login";
 
-  return (
-    <AuthLayout title="Create Account" subtitle="कुछ ही seconds में join करें और earning शुरू करें" back="/onboarding">
-      {deviceWarning && (
-        <div className="mb-5 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 space-y-3">
-          <div className="flex gap-3">
-            <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
-            <div className="space-y-1 text-sm flex-1">
-              <p className="font-semibold text-destructive">Account already exists on this device</p>
-              <p className="text-muted-foreground text-xs">{deviceWarning.message}</p>
-              {deviceWarning.emailHint && (
-                <p className="font-mono text-sm font-bold text-foreground bg-background/60 rounded-lg px-3 py-2 mt-2 inline-block">
-                  {deviceWarning.emailHint}
+  // When this device is already linked, show ONLY the warning card —
+  // hide the signup form entirely so nothing visually overlaps.
+  if (deviceWarning) {
+    return (
+      <AuthLayout title="Account Found" subtitle="Is device pe pehle se ek account hai" back="/onboarding">
+        <div className="space-y-5">
+          <div className="rounded-2xl border border-destructive/40 bg-destructive/10 p-5">
+            <div className="flex gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="space-y-2 text-sm flex-1 min-w-0">
+                <p className="font-semibold text-destructive">One device, one account</p>
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  {deviceWarning.message}
                 </p>
-              )}
+                {deviceWarning.emailHint && (
+                  <div className="bg-background/70 rounded-xl px-3 py-2 mt-2">
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
+                      Registered email
+                    </p>
+                    <p className="font-mono text-sm font-bold text-foreground break-all">
+                      {deviceWarning.emailHint}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <Link to={loginHref} className="block">
-            <Button variant="hero" size="sm" className="w-full">
-              Go to Login{deviceWarning.emailHint ? ` as ${deviceWarning.emailHint}` : ""} →
+            <Button variant="hero" size="lg" className="w-full">
+              Go to Login →
             </Button>
           </Link>
+          <p className="text-center text-xs text-muted-foreground">
+            Naya account banane ke liye dusra device use karein.
+          </p>
         </div>
-      )}
+      </AuthLayout>
+    );
+  }
+
+  return (
+    <AuthLayout title="Create Account" subtitle="कुछ ही seconds में join करें और earning शुरू करें" back="/onboarding">
+
       {/* Mode Toggle */}
       <div className="flex bg-muted rounded-full p-1 mb-6">
         <button

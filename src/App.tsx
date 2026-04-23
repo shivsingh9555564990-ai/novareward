@@ -38,6 +38,7 @@ import Friends from "./pages/Friends";
 import FriendRequests from "./pages/FriendRequests";
 import UserProfile from "./pages/UserProfile";
 import AuthCallback from "./pages/AuthCallback";
+import DebugDevice from "./pages/DebugDevice";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ const App = () => (
             <Route path="/friend-requests" element={<FriendRequests />} />
             <Route path="/u/:id" element={<UserProfile />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/debug/device" element={<DebugDevice />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

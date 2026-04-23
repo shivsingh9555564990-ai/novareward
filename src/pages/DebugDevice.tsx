@@ -52,7 +52,7 @@ const DebugDevice = () => {
       toast.error(error.message);
       return;
     }
-    setStatus(data as DeviceStatus);
+    setStatus(data as unknown as DeviceStatus);
   };
 
   useEffect(() => {

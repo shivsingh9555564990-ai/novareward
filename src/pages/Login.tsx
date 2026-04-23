@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { routeAfterAuth } from "@/lib/routeAfterAuth";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -26,7 +27,7 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
       const msg = error.message.toLowerCase();
@@ -42,20 +43,24 @@ const Login = () => {
       return;
     }
     toast.success("Welcome back! 🎉");
-    navigate("/profile-setup", { replace: true });
+    const dest = data.user ? await routeAfterAuth(data.user.id) : "/home";
+    navigate(dest, { replace: true });
   };
 
   const handleGoogle = async () => {
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth/callback`,
+      redirect_uri: window.location.origin,
     });
     if (result.error) {
       toast.error(result.error.message || "Google sign-in failed");
       return;
     }
     if (!result.redirected) {
+      // Tokens already set — figure out where to go based on profile state.
+      const { data } = await supabase.auth.getSession();
+      const dest = data.session?.user ? await routeAfterAuth(data.session.user.id) : "/home";
       toast.success("Welcome! 🎉");
-      navigate("/home", { replace: true });
+      navigate(dest, { replace: true });
     }
   };
 

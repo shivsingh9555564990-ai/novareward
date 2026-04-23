@@ -94,16 +94,39 @@ const Login = () => {
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               id="password"
-              type={showPwd ? "text" : "password"}
+              // Always rendered as text so we can mask everything except last 3 chars
+              // (mobile-keyboard style). Eye icon toggles full reveal.
+              type="text"
               placeholder="••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-11 pr-11 h-12 rounded-2xl"
+              value={
+                showPwd || password.length <= 3
+                  ? password
+                  : "•".repeat(password.length - 3) + password.slice(-3)
+              }
+              onChange={(e) => {
+                const next = e.target.value;
+                if (showPwd) {
+                  setPassword(next);
+                  return;
+                }
+                // Reconstruct real password from masked display:
+                // any "•" keeps the original char at that index, everything else
+                // is what the user just typed.
+                let rebuilt = "";
+                for (let i = 0; i < next.length; i++) {
+                  const ch = next[i];
+                  rebuilt += ch === "•" ? password[i] ?? "" : ch;
+                }
+                setPassword(rebuilt);
+              }}
+              autoComplete="current-password"
+              className="pl-11 pr-11 h-12 rounded-2xl tracking-wider"
               required
             />
             <button
               type="button"
               onClick={() => setShowPwd((s) => !s)}
+              aria-label={showPwd ? "Hide password" : "Show password"}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
             >
               {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

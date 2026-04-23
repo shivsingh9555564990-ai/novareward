@@ -127,8 +127,11 @@ const LuckyDice = () => {
             <div className="glass rounded-2xl p-4 text-center">
               <p className="text-xs uppercase tracking-widest text-muted-foreground">You earned</p>
               <p className="text-3xl font-extrabold text-gradient-coin">+{reward} NC</p>
+              <p className="text-[11px] text-muted-foreground mt-2">Kal phir roll karo!</p>
             </div>
-            <Button onClick={() => setPhase("idle")} variant="hero" size="lg" className="w-full">Roll Again</Button>
+            <Link to="/games" className="block">
+              <Button variant="hero" size="lg" className="w-full">Back to Games</Button>
+            </Link>
           </div>
         )}
       </main>

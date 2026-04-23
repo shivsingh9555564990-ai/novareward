@@ -21,7 +21,7 @@ const Register = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [deviceWarning, setDeviceWarning] = useState<string | null>(null);
+  const [deviceWarning, setDeviceWarning] = useState<{ message: string; emailHint: string | null } | null>(null);
 
   useEffect(() => {
     const ref = params.get("ref");
@@ -43,11 +43,12 @@ const Register = () => {
         const { data } = await supabase.rpc("check_device_signup", { p_device_fp: fp });
         const res = data as any;
         if (res?.exists) {
-          setDeviceWarning(
-            res.email_hint
-              ? `Is device se already account bana hai (${res.email_hint}). Usi email se login karo.`
-              : "Is device se already ek account bana hai. Pehle wale account se login karo."
-          );
+          setDeviceWarning({
+            message: res.email_hint
+              ? `Is device se already account hai. Wahi email use karo:`
+              : "Is device se already ek account bana hai. Pehle wale account se login karo.",
+            emailHint: res.email_hint ?? null,
+          });
         }
       } catch { /* ignore */ }
     })();

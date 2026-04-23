@@ -39,8 +39,18 @@ const maskEmail = (email?: string | null) => {
   if (!email) return null;
   const [user, domain] = email.split("@");
   if (!domain) return email;
+  // Show first 2 chars + masked middle + last 5 chars before "@" so the
+  // user can clearly recognise which email was used to register.
+  // e.g.  shubham.kumar99@gmail.com  ->  sh*******mar99@gmail.com
+  if (user.length <= 7) {
+    // Too short to safely reveal 5 trailing chars — fall back to first 2 only.
+    const head = user.slice(0, 2);
+    return `${head}${"*".repeat(Math.max(1, user.length - 2))}@${domain}`;
+  }
   const head = user.slice(0, 2);
-  return `${head}${"*".repeat(Math.max(1, user.length - 2))}@${domain}`;
+  const tail = user.slice(-5);
+  const maskedLen = Math.max(1, user.length - 2 - 5);
+  return `${head}${"*".repeat(maskedLen)}${tail}@${domain}`;
 };
 
 /**

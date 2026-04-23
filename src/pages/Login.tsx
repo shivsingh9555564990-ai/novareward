@@ -17,15 +17,13 @@ const Login = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Pre-fill email when redirected from Register's device-conflict warning,
-  // and surface a clear message if the user was bounced from a blocked Google signup.
+  // Show account hint when redirected from device-conflict checks.
   useEffect(() => {
-    const e = params.get("email");
-    if (e) setEmail(e);
+    const hint = params.get("email_hint");
     if (params.get("device_blocked") === "1") {
-      const hint = e ? ` (${e})` : "";
+      const suffix = hint ? ` (${hint})` : "";
       toast.error(
-        `⚠️ Is device pe pehle se ek account hai${hint}. Naya account allowed nahi — wahi email se login karo.`,
+        `⚠️ Is device pe pehle se ek account hai${suffix}. Naya account allowed nahi — usi email se login karo.`,
         { duration: 9000 }
       );
     }
@@ -73,6 +71,14 @@ const Login = () => {
   return (
     <AuthLayout title="Welcome Back" subtitle="Login करके अपनी earnings continue करें">
       <form onSubmit={handleLogin} className="space-y-4">
+        {params.get("email_hint") && (
+          <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Use this email</p>
+            <p className="mt-1 break-all font-mono text-sm font-semibold text-foreground">
+              {params.get("email_hint")}
+            </p>
+          </div>
+        )}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <div className="relative">

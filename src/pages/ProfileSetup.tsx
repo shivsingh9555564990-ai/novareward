@@ -68,6 +68,14 @@ const ProfileSetup = () => {
     navigate("/interests", { replace: true });
   };
 
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <AuthLayout title="Setup Profile" subtitle="अपना avatar और नाम चुनें">
       <form onSubmit={save} className="space-y-6">

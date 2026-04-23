@@ -841,6 +841,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      mask_email_hint: { Args: { p_email: string }; Returns: string }
       play_game: {
         Args: { p_device_fp: string; p_game: string; p_score: number }
         Returns: Json

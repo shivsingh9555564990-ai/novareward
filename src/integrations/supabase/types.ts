@@ -802,6 +802,10 @@ export type Database = {
         Returns: string
       }
       decline_friend_request: { Args: { p_request_id: string }; Returns: Json }
+      enforce_device_single_account: {
+        Args: { p_device_fp: string; p_email_hint: string }
+        Returns: Json
+      }
       follow_user: { Args: { p_target: string }; Returns: Json }
       gen_referral_code: { Args: never; Returns: string }
       get_leaderboard: {

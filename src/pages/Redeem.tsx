@@ -112,8 +112,9 @@ const Redeem = () => {
       const map: Record<string, string> = {
         insufficient_coins: "Not enough Nova Coins",
         invalid_upi: "Invalid UPI ID",
-        invalid_amount: "Amount out of range",
+        invalid_amount: "Amount out of range (min ₹10, max ₹10,000)",
         invalid_brand: "Pick a gift card brand",
+        account_banned: "⛔ Account banned. Contact support.",
       };
       toast.error(map[res?.error || ""] || "Failed");
       return;

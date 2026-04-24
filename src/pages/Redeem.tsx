@@ -66,8 +66,11 @@ const Redeem = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("coins").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setCoins(data?.coins ?? 0));
+    supabase.from("profiles").select("coins, test_withdrawal_used").eq("id", user.id).maybeSingle()
+      .then(({ data }) => {
+        setCoins(data?.coins ?? 0);
+        setTestUsed(!!(data as any)?.test_withdrawal_used);
+      });
   }, [user, mode]);
 
   const categories = useMemo(() => {

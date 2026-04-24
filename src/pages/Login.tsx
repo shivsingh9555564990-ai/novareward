@@ -83,8 +83,32 @@ const Login = () => {
       return;
     }
     toast.success("Welcome back! 🎉");
+    // Keep biometric token fresh so next visit auto-logs in.
+    await refreshBiometricToken();
     const dest = data.user ? await routeAfterAuth(data.user.id) : "/home";
     navigate(dest, { replace: true });
+  };
+
+  const handleBiometricClick = async () => {
+    if (!biometricSupported()) {
+      toast.error("Is browser/device pe biometric support nahi hai");
+      return;
+    }
+    if (!biometricEnrolled()) {
+      toast.info("Pehle ek baar email/password se login karo, fir Profile se Biometric enable karo");
+      return;
+    }
+    setBioBusy(true);
+    try {
+      const userId = await loginWithBiometric();
+      toast.success("Welcome back! 👆");
+      const dest = await routeAfterAuth(userId);
+      navigate(dest, { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message || "Biometric login failed");
+    } finally {
+      setBioBusy(false);
+    }
   };
 
   const handleGoogle = async () => {

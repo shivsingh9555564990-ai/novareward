@@ -39,6 +39,9 @@ import FriendRequests from "./pages/FriendRequests";
 import UserProfile from "./pages/UserProfile";
 import AuthCallback from "./pages/AuthCallback";
 import DebugDevice from "./pages/DebugDevice";
+import Settings from "./pages/Settings";
+import ChangePassword from "./pages/ChangePassword";
+import PaymentMethods from "./pages/PaymentMethods";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -86,6 +89,9 @@ const App = () => (
             <Route path="/u/:id" element={<UserProfile />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/debug/device" element={<DebugDevice />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/payment-methods" element={<PaymentMethods />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -129,6 +129,32 @@ const Login = () => {
 
   return (
     <AuthLayout title="Welcome Back" subtitle="Login करके अपनी earnings continue करें">
+      {bioReady && (
+        <button
+          type="button"
+          onClick={handleBiometricClick}
+          disabled={bioBusy}
+          className="w-full mb-4 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-accent/10 to-secondary/15 p-4 text-left transition-bounce active:scale-[0.98] disabled:opacity-60"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Fingerprint className={`h-6 w-6 text-primary-foreground ${bioBusy ? "animate-pulse" : ""}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-widest text-primary font-bold">
+                {bioBusy ? "Verifying…" : "Tap to login"}
+              </p>
+              <p className="font-bold text-sm truncate">
+                Use Fingerprint / Face
+              </p>
+              {bioHint && (
+                <p className="text-[11px] text-muted-foreground truncate">{bioHint}</p>
+              )}
+            </div>
+          </div>
+        </button>
+      )}
+
       <form onSubmit={handleLogin} className="space-y-4">
         {params.get("email_hint") && (
           <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3">
@@ -230,9 +256,10 @@ const Login = () => {
           type="button"
           variant="outline"
           size="lg"
-          onClick={() => toast.info("Biometric login native app में available होगा")}
+          onClick={handleBiometricClick}
+          disabled={bioBusy}
         >
-          <Fingerprint className="w-5 h-5" />
+          <Fingerprint className={`w-5 h-5 ${bioBusy ? "animate-pulse" : ""}`} />
           Biometric
         </Button>
       </div>

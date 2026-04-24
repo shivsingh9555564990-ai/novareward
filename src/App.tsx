@@ -42,6 +42,7 @@ import DebugDevice from "./pages/DebugDevice";
 import Settings from "./pages/Settings";
 import ChangePassword from "./pages/ChangePassword";
 import PaymentMethods from "./pages/PaymentMethods";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/payment-methods" element={<PaymentMethods />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

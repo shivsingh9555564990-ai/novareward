@@ -17,6 +17,7 @@ import {
   disableBiometric,
 } from "@/lib/biometric";
 import { formatRupees } from "@/lib/nova";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 interface Profile {
   full_name: string | null;
@@ -50,6 +51,7 @@ const ProfileLink = ({
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bioOn, setBioOn] = useState<boolean>(biometricEnrolled());
   const [bioBusy, setBioBusy] = useState(false);
@@ -171,6 +173,9 @@ const Profile = () => {
 
         {/* Quick links */}
         <div className="glass rounded-2xl divide-y divide-border/40">
+          {isAdmin && (
+            <ProfileLink icon={ShieldCheck} label="🛡️ Admin Panel" onClick={() => navigate("/admin")} />
+          )}
           <ProfileLink icon={Bell} label="Notifications" onClick={() => navigate("/notifications")} />
           <ProfileLink icon={WalletIcon} label="Payment Methods" onClick={() => navigate("/payment-methods")} />
           <ProfileLink icon={KeyRound} label="Change Password" onClick={() => navigate("/change-password")} />

@@ -439,6 +439,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          ban_reason: string | null
           bio: string | null
           coins: number
           created_at: string
@@ -450,12 +451,16 @@ export type Database = {
           full_name: string | null
           id: string
           interests: string[] | null
+          is_banned: boolean
+          is_suspicious: boolean
           onboarded: boolean
           phone: string | null
+          test_withdrawal_used: boolean
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          ban_reason?: string | null
           bio?: string | null
           coins?: number
           created_at?: string
@@ -467,12 +472,16 @@ export type Database = {
           full_name?: string | null
           id: string
           interests?: string[] | null
+          is_banned?: boolean
+          is_suspicious?: boolean
           onboarded?: boolean
           phone?: string | null
+          test_withdrawal_used?: boolean
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          ban_reason?: string | null
           bio?: string | null
           coins?: number
           created_at?: string
@@ -484,8 +493,11 @@ export type Database = {
           full_name?: string | null
           id?: string
           interests?: string[] | null
+          is_banned?: boolean
+          is_suspicious?: boolean
           onboarded?: boolean
           phone?: string | null
+          test_withdrawal_used?: boolean
           updated_at?: string
         }
         Relationships: []
@@ -802,6 +814,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       voucher_codes: {
         Row: {
           amount_inr: number
@@ -849,7 +882,79 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _require_admin: { Args: never; Returns: undefined }
       accept_friend_request: { Args: { p_request_id: string }; Returns: Json }
+      admin_adjust_coins: {
+        Args: { p_amount: number; p_note?: string; p_user_id: string }
+        Returns: Json
+      }
+      admin_get_user: { Args: { p_user_id: string }; Returns: Json }
+      admin_list_redemptions: {
+        Args: { p_limit?: number; p_status?: string }
+        Returns: {
+          amount_inr: number
+          brand: string
+          coins_spent: number
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          meta: Json
+          status: string
+          type: string
+          upi_id: string
+          user_id: string
+        }[]
+      }
+      admin_list_user_transactions: {
+        Args: { p_limit?: number; p_user_id: string }
+        Returns: {
+          amount: number
+          created_at: string
+          id: string
+          meta: Json
+          reference_id: string
+          source: string
+          status: string
+          type: string
+        }[]
+      }
+      admin_reverse_transaction: {
+        Args: { p_reason?: string; p_tx_id: string }
+        Returns: Json
+      }
+      admin_search_users: {
+        Args: { p_limit?: number; p_query: string }
+        Returns: {
+          coins: number
+          created_at: string
+          email: string
+          full_name: string
+          is_banned: boolean
+          is_suspicious: boolean
+          last_sign_in_at: string
+          test_withdrawal_used: boolean
+          user_id: string
+        }[]
+      }
+      admin_set_ban: {
+        Args: { p_banned: boolean; p_reason?: string; p_user_id: string }
+        Returns: Json
+      }
+      admin_set_suspicious: {
+        Args: { p_flag: boolean; p_user_id: string }
+        Returns: Json
+      }
+      admin_stats: { Args: never; Returns: Json }
+      admin_update_redemption: {
+        Args: {
+          p_action: string
+          p_note?: string
+          p_redemption_id: string
+          p_utr?: string
+        }
+        Returns: Json
+      }
       apply_referral_code: {
         Args: { p_code: string; p_device_fp: string }
         Returns: Json
@@ -908,6 +1013,13 @@ export type Database = {
       }
       get_my_device_status: { Args: { p_device_fp: string }; Returns: Json }
       get_user_profile: { Args: { p_user_id: string }; Returns: Json }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       list_friend_requests: {
         Args: { p_box?: string }
         Returns: {
@@ -966,7 +1078,7 @@ export type Database = {
       unfollow_user: { Args: { p_target: string }; Returns: Json }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1093,6 +1205,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const

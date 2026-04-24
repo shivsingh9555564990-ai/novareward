@@ -7,6 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { routeAfterAuth } from "@/lib/routeAfterAuth";
+import {
+  biometricSupported,
+  biometricEnrolled,
+  biometricEmailHint,
+  loginWithBiometric,
+  refreshBiometricToken,
+} from "@/lib/biometric";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -16,6 +23,34 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [bioBusy, setBioBusy] = useState(false);
+  const bioReady = biometricSupported() && biometricEnrolled();
+  const bioHint = biometricEmailHint();
+
+  // Auto-prompt biometric on page load if it's enrolled — true "tap finger to login".
+  useEffect(() => {
+    if (!bioReady) return;
+    if (params.get("device_blocked") === "1") return; // don't auto-bio after a block
+    let cancelled = false;
+    (async () => {
+      try {
+        setBioBusy(true);
+        const userId = await loginWithBiometric();
+        if (cancelled) return;
+        toast.success("Welcome back! 👆");
+        const dest = await routeAfterAuth(userId);
+        navigate(dest, { replace: true });
+      } catch {
+        // user cancelled or token expired — silently fall back to form
+      } finally {
+        if (!cancelled) setBioBusy(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Show account hint when redirected from device-conflict checks.
   useEffect(() => {

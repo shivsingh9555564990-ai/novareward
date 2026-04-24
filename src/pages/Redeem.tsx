@@ -48,6 +48,7 @@ const Redeem = () => {
   const [terms, setTerms] = useState(false);
   const [upiId, setUpiId] = useState("");
   const [coins, setCoins] = useState(0);
+  const [testUsed, setTestUsed] = useState<boolean>(true); // assume true until known
   const [submitting, setSubmitting] = useState(false);
   const [doneRef, setDoneRef] = useState<string | null>(null);
 

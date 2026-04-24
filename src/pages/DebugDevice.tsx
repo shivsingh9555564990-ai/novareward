@@ -6,6 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { getDeviceFp, resetDeviceFp } from "@/lib/deviceFp";
+import {
+  checkBiometricSupport,
+  platformAuthenticatorAvailable,
+  biometricEnrolled,
+  biometricCredentialId,
+  biometricEmailHint,
+} from "@/lib/biometric";
 import { toast } from "sonner";
 import { ArrowLeft, Copy, Fingerprint, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react";
 import BottomNav from "@/components/BottomNav";

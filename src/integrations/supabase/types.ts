@@ -388,12 +388,62 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          account_holder: string | null
+          account_number: string | null
+          bank_name: string | null
+          created_at: string
+          id: string
+          ifsc_code: string | null
+          is_default: boolean
+          is_verified: boolean
+          kind: string
+          nickname: string | null
+          updated_at: string
+          upi_vpa: string | null
+          user_id: string
+        }
+        Insert: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          is_default?: boolean
+          is_verified?: boolean
+          kind: string
+          nickname?: string | null
+          updated_at?: string
+          upi_vpa?: string | null
+          user_id: string
+        }
+        Update: {
+          account_holder?: string | null
+          account_number?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          is_default?: boolean
+          is_verified?: boolean
+          kind?: string
+          nickname?: string | null
+          updated_at?: string
+          upi_vpa?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
           coins: number
           created_at: string
+          deleted_at: string | null
+          deletion_requested_at: string | null
           followers_count: number
           following_count: number
           friends_count: number
@@ -409,6 +459,8 @@ export type Database = {
           bio?: string | null
           coins?: number
           created_at?: string
+          deleted_at?: string | null
+          deletion_requested_at?: string | null
           followers_count?: number
           following_count?: number
           friends_count?: number
@@ -424,6 +476,8 @@ export type Database = {
           bio?: string | null
           coins?: number
           created_at?: string
+          deleted_at?: string | null
+          deletion_requested_at?: string | null
           followers_count?: number
           following_count?: number
           friends_count?: number
@@ -715,6 +769,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          notif_marketing: boolean
+          notif_rewards: boolean
+          notif_social: boolean
+          notif_system: boolean
+          sound_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          notif_marketing?: boolean
+          notif_rewards?: boolean
+          notif_social?: boolean
+          notif_system?: boolean
+          sound_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          notif_marketing?: boolean
+          notif_rewards?: boolean
+          notif_social?: boolean
+          notif_system?: boolean
+          sound_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       voucher_codes: {
         Row: {
           amount_inr: number
@@ -767,6 +854,7 @@ export type Database = {
         Args: { p_code: string; p_device_fp: string }
         Returns: Json
       }
+      cancel_account_deletion: { Args: never; Returns: Json }
       cancel_friend_request: { Args: { p_request_id: string }; Returns: Json }
       check_device_signup: { Args: { p_device_fp: string }; Returns: Json }
       claim_daily_activity: {
@@ -842,6 +930,7 @@ export type Database = {
           user_id: string
         }[]
       }
+      mark_all_notifications_read: { Args: never; Returns: Json }
       mask_email_hint: { Args: { p_email: string }; Returns: string }
       play_game: {
         Args: { p_device_fp: string; p_game: string; p_score: number }
@@ -852,6 +941,7 @@ export type Database = {
         Returns: Json
       }
       remove_friend: { Args: { p_other: string }; Returns: Json }
+      request_account_deletion: { Args: never; Returns: Json }
       search_users: {
         Args: { p_limit?: number; p_query: string }
         Returns: {
@@ -869,6 +959,10 @@ export type Database = {
         }[]
       }
       send_friend_request: { Args: { p_receiver: string }; Returns: Json }
+      set_default_payment_method: {
+        Args: { p_method_id: string }
+        Returns: Json
+      }
       unfollow_user: { Args: { p_target: string }; Returns: Json }
     }
     Enums: {

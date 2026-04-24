@@ -6,6 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { getDeviceFp, resetDeviceFp } from "@/lib/deviceFp";
+import {
+  checkBiometricSupport,
+  platformAuthenticatorAvailable,
+  biometricEnrolled,
+  biometricCredentialId,
+  biometricEmailHint,
+} from "@/lib/biometric";
 import { toast } from "sonner";
 import { ArrowLeft, Copy, Fingerprint, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
@@ -36,6 +43,15 @@ const DebugDevice = () => {
   const [fp, setFp] = useState<string>("");
   const [status, setStatus] = useState<DeviceStatus | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hasPlatform, setHasPlatform] = useState<boolean | null>(null);
+  const bioCheck = checkBiometricSupport();
+  const bioOn = biometricEnrolled();
+  const credId = biometricCredentialId();
+  const bioEmail = biometricEmailHint();
+
+  useEffect(() => {
+    platformAuthenticatorAvailable().then(setHasPlatform);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });
@@ -123,6 +139,25 @@ const DebugDevice = () => {
               </p>
             </div>
           </div>
+        </Card>
+
+        {/* Biometric / WebAuthn status */}
+        <Card className="glass p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Fingerprint className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-bold">Biometric (WebAuthn)</h2>
+          </div>
+          <div className="space-y-1.5">
+            <Row label="Secure context (HTTPS)" value={window.isSecureContext ? "Yes ✅" : "No 🚫"} />
+            <Row label="WebAuthn supported" value={bioCheck.ok ? "Yes ✅" : `No — ${bioCheck.reason}`} />
+            <Row label="Platform authenticator" value={hasPlatform === null ? "Checking…" : hasPlatform ? "Yes ✅" : "No 🚫"} />
+            <Row label="Enrolled on this device" value={bioOn ? "Yes ✅" : "No"} />
+            <Row label="Biometric email" value={bioEmail || "—"} />
+            <Row label="Credential id" value={credId ? credId.slice(0, 16) + "…" : "—"} mono />
+          </div>
+          {!bioCheck.ok && (
+            <p className="text-[11px] text-destructive mt-3">{bioCheck.message}</p>
+          )}
         </Card>
 
         {/* Fingerprint card */}

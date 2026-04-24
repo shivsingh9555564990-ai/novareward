@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Mail, Coins, Fingerprint, ShieldCheck } from "lucide-react";
+import {
+  LogOut, Mail, Coins, Fingerprint, ShieldCheck,
+  Settings, Bell, Wallet as WalletIcon, KeyRound, ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import SmartAvatar from "@/components/SmartAvatar";
 import {
-  biometricSupported,
+  checkBiometricSupport,
   biometricEnrolled,
   enrollBiometric,
   disableBiometric,
@@ -22,13 +25,36 @@ interface Profile {
   phone: string | null;
 }
 
+const ProfileLink = ({
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-muted/40 transition-colors"
+  >
+    <div className="h-9 w-9 rounded-xl bg-muted/50 flex items-center justify-center">
+      <Icon className="h-4 w-4 text-foreground" />
+    </div>
+    <span className="flex-1 text-sm font-semibold">{label}</span>
+    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+  </button>
+);
+
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bioOn, setBioOn] = useState<boolean>(biometricEnrolled());
   const [bioBusy, setBioBusy] = useState(false);
-  const bioSupport = biometricSupported();
+  const bioCheck = checkBiometricSupport();
+  const bioSupport = bioCheck.ok;
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });
@@ -131,7 +157,7 @@ const Profile = () => {
               </p>
               <p className="text-[11px] text-muted-foreground">
                 {!bioSupport
-                  ? "Is browser/device pe support nahi"
+                  ? bioCheck.message
                   : bioOn
                   ? "Tap to disable — finger/face se auto-login"
                   : "Tap to register fingerprint / face for one-tap login"}
@@ -143,13 +169,14 @@ const Profile = () => {
           </div>
         </button>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => navigate("/debug/device")}
-        >
-          <Fingerprint className="w-4 h-4" /> Device & Anti-Fraud
-        </Button>
+        {/* Quick links */}
+        <div className="glass rounded-2xl divide-y divide-border/40">
+          <ProfileLink icon={Bell} label="Notifications" onClick={() => navigate("/notifications")} />
+          <ProfileLink icon={WalletIcon} label="Payment Methods" onClick={() => navigate("/payment-methods")} />
+          <ProfileLink icon={KeyRound} label="Change Password" onClick={() => navigate("/change-password")} />
+          <ProfileLink icon={Settings} label="Settings" onClick={() => navigate("/settings")} />
+          <ProfileLink icon={Fingerprint} label="Device & Anti-Fraud" onClick={() => navigate("/debug/device")} />
+        </div>
 
         <Button
           variant="outline"

@@ -43,6 +43,15 @@ const DebugDevice = () => {
   const [fp, setFp] = useState<string>("");
   const [status, setStatus] = useState<DeviceStatus | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hasPlatform, setHasPlatform] = useState<boolean | null>(null);
+  const bioCheck = checkBiometricSupport();
+  const bioOn = biometricEnrolled();
+  const credId = biometricCredentialId();
+  const bioEmail = biometricEmailHint();
+
+  useEffect(() => {
+    platformAuthenticatorAvailable().then(setHasPlatform);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });

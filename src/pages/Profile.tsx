@@ -25,6 +25,28 @@ interface Profile {
   phone: string | null;
 }
 
+const ProfileLink = ({
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  onClick: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-muted/40 transition-colors"
+  >
+    <div className="h-9 w-9 rounded-xl bg-muted/50 flex items-center justify-center">
+      <Icon className="h-4 w-4 text-foreground" />
+    </div>
+    <span className="flex-1 text-sm font-semibold">{label}</span>
+    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+  </button>
+);
+
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();

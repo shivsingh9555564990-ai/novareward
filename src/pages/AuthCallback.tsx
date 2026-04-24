@@ -82,6 +82,9 @@ const AuthCallback = () => {
         // signup / magiclink / email_change / invite / oauth → continue into app
         const { data } = await supabase.auth.getSession();
         if (data.session?.user) {
+          // Refresh stored biometric token if user previously enrolled.
+          const { refreshBiometricToken } = await import("@/lib/biometric");
+          await refreshBiometricToken();
           const { routeAfterAuth } = await import("@/lib/routeAfterAuth");
           const dest = await routeAfterAuth(data.session.user.id);
           if (dest === "/home") {

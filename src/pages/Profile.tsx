@@ -51,6 +51,7 @@ const ProfileLink = ({
 const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [bioOn, setBioOn] = useState<boolean>(biometricEnrolled());
   const [bioBusy, setBioBusy] = useState(false);

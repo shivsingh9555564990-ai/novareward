@@ -226,6 +226,8 @@ const Redeem = () => {
 
   // ─────────────── UPI ───────────────
   if (mode === "upi") {
+    const isTestAmount = amountInr === TEST_AMOUNT && !testUsed;
+    const minOk = isTestAmount || amountInr >= 100;
     return (
       <div className="relative min-h-screen pb-28 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
@@ -234,6 +236,24 @@ const Redeem = () => {
           <h1 className="text-xl font-extrabold">UPI Withdrawal</h1>
         </header>
         <main className="relative z-10 mt-6 px-5 space-y-5">
+          {!testUsed && (
+            <button
+              onClick={() => setAmountInr(TEST_AMOUNT)}
+              className={cn(
+                "w-full glass rounded-2xl p-4 text-left border transition-bounce",
+                isTestAmount ? "border-success bg-success/10 shadow-glow" : "border-success/40"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-success/20 flex items-center justify-center text-xl">🎁</div>
+                <div className="flex-1">
+                  <p className="text-sm font-extrabold text-success">₹2 Test Withdrawal</p>
+                  <p className="text-[11px] text-muted-foreground">One-time check that UPI delivery works · Sirf 24 NC</p>
+                </div>
+                {isTestAmount && <Check className="h-5 w-5 text-success" />}
+              </div>
+            </button>
+          )}
           <div className="glass rounded-2xl p-4">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">UPI ID</p>
             <Input placeholder="yourname@upi" value={upiId} onChange={(e) => setUpiId(e.target.value.trim())} className="mt-2" />
@@ -248,12 +268,13 @@ const Redeem = () => {
                 </button>
               ))}
             </div>
-            <Input type="number" min={100} max={10000} value={amountInr} onChange={(e) => setAmountInr(Number(e.target.value) || 0)} className="mt-3" />
+            <Input type="number" min={isTestAmount ? 2 : 100} max={10000} value={amountInr} onChange={(e) => setAmountInr(Number(e.target.value) || 0)} className="mt-3" />
             <p className="mt-2 text-xs text-muted-foreground">
-              Cost: <span className="font-bold text-coin">{amountInr * NC_PER_INR} NC</span> · Min ₹100 · Max ₹10,000
+              Cost: <span className="font-bold text-coin">{amountInr * NC_PER_INR} NC</span>
+              {" · "}{isTestAmount ? "Test mode (one-time)" : "Min ₹100 · Max ₹10,000"}
             </p>
           </div>
-          <Button variant="hero" size="xl" className="w-full" onClick={() => { setTab("upi"); setDelivery("upi"); setMode("confirm"); }} disabled={amountInr < 100 || amountInr > 10000 || upiId.length < 4}>
+          <Button variant="hero" size="xl" className="w-full" onClick={() => { setTab("upi"); setDelivery("upi"); setMode("confirm"); }} disabled={!minOk || amountInr > 10000 || upiId.length < 4}>
             Continue
           </Button>
         </main>

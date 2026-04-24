@@ -3,9 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Mail, Coins, Fingerprint } from "lucide-react";
+import { LogOut, Mail, Coins, Fingerprint, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
+import SmartAvatar from "@/components/SmartAvatar";
+import {
+  biometricSupported,
+  biometricEnrolled,
+  enrollBiometric,
+  disableBiometric,
+} from "@/lib/biometric";
 import { formatRupees } from "@/lib/nova";
 
 interface Profile {
@@ -19,6 +26,9 @@ const Profile = () => {
   const navigate = useNavigate();
   const { user, loading, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [bioOn, setBioOn] = useState<boolean>(biometricEnrolled());
+  const [bioBusy, setBioBusy] = useState(false);
+  const bioSupport = biometricSupported();
 
   useEffect(() => {
     if (!loading && !user) navigate("/login", { replace: true });
@@ -33,6 +43,29 @@ const Profile = () => {
       .maybeSingle()
       .then(({ data }) => data && setProfile(data));
   }, [user]);
+
+  const toggleBiometric = async () => {
+    if (!bioSupport) {
+      toast.error("Is browser/device pe biometric support nahi hai");
+      return;
+    }
+    setBioBusy(true);
+    try {
+      if (bioOn) {
+        disableBiometric();
+        setBioOn(false);
+        toast.success("Biometric login disabled");
+      } else {
+        await enrollBiometric();
+        setBioOn(true);
+        toast.success("✅ Biometric enabled — ab finger se login hoga");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Biometric setup failed");
+    } finally {
+      setBioBusy(false);
+    }
+  };
 
   if (loading || !user) return null;
 

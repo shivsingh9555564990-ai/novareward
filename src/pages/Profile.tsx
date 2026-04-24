@@ -76,9 +76,11 @@ const Profile = () => {
 
       <header className="relative z-10 px-6 pt-10 pb-6 text-center">
         <div className="mx-auto h-24 w-24 rounded-full bg-gradient-primary p-[3px] shadow-glow animate-pulse-glow">
-          <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-4xl">
-            {profile?.avatar_url || "👤"}
-          </div>
+          <SmartAvatar
+            src={profile?.avatar_url}
+            name={profile?.full_name}
+            className="h-full w-full text-4xl"
+          />
         </div>
         <h1 className="mt-4 text-2xl font-extrabold">
           {profile?.full_name || "Nova Explorer"}
@@ -103,6 +105,43 @@ const Profile = () => {
             {formatRupees(profile?.coins ?? 0)}
           </p>
         </div>
+
+        {/* Biometric login toggle */}
+        <button
+          type="button"
+          onClick={toggleBiometric}
+          disabled={bioBusy || !bioSupport}
+          className={`w-full text-left rounded-2xl p-4 border-2 transition-bounce active:scale-[0.99] disabled:opacity-60 ${
+            bioOn
+              ? "border-primary/40 bg-gradient-to-br from-primary/15 via-accent/10 to-secondary/15"
+              : "border-border bg-muted/30"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className={`h-11 w-11 rounded-xl flex items-center justify-center ${bioOn ? "bg-gradient-primary shadow-glow" : "bg-muted"}`}>
+              {bioOn ? (
+                <ShieldCheck className="h-5 w-5 text-primary-foreground" />
+              ) : (
+                <Fingerprint className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm">
+                {bioOn ? "Biometric login ON" : "Enable Biometric login"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {!bioSupport
+                  ? "Is browser/device pe support nahi"
+                  : bioOn
+                  ? "Tap to disable — finger/face se auto-login"
+                  : "Tap to register fingerprint / face for one-tap login"}
+              </p>
+            </div>
+            <span className={`text-[10px] font-bold uppercase tracking-wider ${bioOn ? "text-primary" : "text-muted-foreground"}`}>
+              {bioBusy ? "..." : bioOn ? "ON" : "OFF"}
+            </span>
+          </div>
+        </button>
 
         <Button
           variant="outline"

@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
+import SmartAvatar from "@/components/SmartAvatar";
 import { formatRupees, getGreeting } from "@/lib/nova";
 import { useCountUp } from "@/hooks/useCountUp";
 import { cn } from "@/lib/utils";

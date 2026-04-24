@@ -187,9 +187,11 @@ const Home = () => {
           >
             <div className="relative">
               <div className="h-11 w-11 rounded-full bg-gradient-primary p-[2px] shadow-glow">
-                <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-xl">
-                  {profile?.avatar_url || "👤"}
-                </div>
+                <SmartAvatar
+                  src={profile?.avatar_url}
+                  name={profile?.full_name}
+                  className="h-full w-full text-xl"
+                />
               </div>
               <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success ring-2 ring-background" />
             </div>

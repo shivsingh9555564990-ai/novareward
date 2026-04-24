@@ -42,6 +42,7 @@ import DebugDevice from "./pages/DebugDevice";
 import Settings from "./pages/Settings";
 import ChangePassword from "./pages/ChangePassword";
 import PaymentMethods from "./pages/PaymentMethods";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

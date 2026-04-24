@@ -173,6 +173,9 @@ const Profile = () => {
 
         {/* Quick links */}
         <div className="glass rounded-2xl divide-y divide-border/40">
+          {isAdmin && (
+            <ProfileLink icon={ShieldCheck} label="🛡️ Admin Panel" onClick={() => navigate("/admin")} />
+          )}
           <ProfileLink icon={Bell} label="Notifications" onClick={() => navigate("/notifications")} />
           <ProfileLink icon={WalletIcon} label="Payment Methods" onClick={() => navigate("/payment-methods")} />
           <ProfileLink icon={KeyRound} label="Change Password" onClick={() => navigate("/change-password")} />

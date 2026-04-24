@@ -17,6 +17,7 @@ import {
   disableBiometric,
 } from "@/lib/biometric";
 import { formatRupees } from "@/lib/nova";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 interface Profile {
   full_name: string | null;

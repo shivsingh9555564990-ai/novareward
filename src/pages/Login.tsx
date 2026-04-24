@@ -7,6 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { routeAfterAuth } from "@/lib/routeAfterAuth";
+import {
+  biometricSupported,
+  biometricEnrolled,
+  biometricEmailHint,
+  loginWithBiometric,
+  refreshBiometricToken,
+} from "@/lib/biometric";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -16,6 +23,34 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [bioBusy, setBioBusy] = useState(false);
+  const bioReady = biometricSupported() && biometricEnrolled();
+  const bioHint = biometricEmailHint();
+
+  // Auto-prompt biometric on page load if it's enrolled — true "tap finger to login".
+  useEffect(() => {
+    if (!bioReady) return;
+    if (params.get("device_blocked") === "1") return; // don't auto-bio after a block
+    let cancelled = false;
+    (async () => {
+      try {
+        setBioBusy(true);
+        const userId = await loginWithBiometric();
+        if (cancelled) return;
+        toast.success("Welcome back! 👆");
+        const dest = await routeAfterAuth(userId);
+        navigate(dest, { replace: true });
+      } catch {
+        // user cancelled or token expired — silently fall back to form
+      } finally {
+        if (!cancelled) setBioBusy(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Show account hint when redirected from device-conflict checks.
   useEffect(() => {
@@ -48,8 +83,32 @@ const Login = () => {
       return;
     }
     toast.success("Welcome back! 🎉");
+    // Keep biometric token fresh so next visit auto-logs in.
+    await refreshBiometricToken();
     const dest = data.user ? await routeAfterAuth(data.user.id) : "/home";
     navigate(dest, { replace: true });
+  };
+
+  const handleBiometricClick = async () => {
+    if (!biometricSupported()) {
+      toast.error("Is browser/device pe biometric support nahi hai");
+      return;
+    }
+    if (!biometricEnrolled()) {
+      toast.info("Pehle ek baar email/password se login karo, fir Profile se Biometric enable karo");
+      return;
+    }
+    setBioBusy(true);
+    try {
+      const userId = await loginWithBiometric();
+      toast.success("Welcome back! 👆");
+      const dest = await routeAfterAuth(userId);
+      navigate(dest, { replace: true });
+    } catch (err: any) {
+      toast.error(err?.message || "Biometric login failed");
+    } finally {
+      setBioBusy(false);
+    }
   };
 
   const handleGoogle = async () => {
@@ -70,6 +129,32 @@ const Login = () => {
 
   return (
     <AuthLayout title="Welcome Back" subtitle="Login करके अपनी earnings continue करें">
+      {bioReady && (
+        <button
+          type="button"
+          onClick={handleBiometricClick}
+          disabled={bioBusy}
+          className="w-full mb-4 rounded-2xl border-2 border-primary/40 bg-gradient-to-br from-primary/15 via-accent/10 to-secondary/15 p-4 text-left transition-bounce active:scale-[0.98] disabled:opacity-60"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Fingerprint className={`h-6 w-6 text-primary-foreground ${bioBusy ? "animate-pulse" : ""}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-widest text-primary font-bold">
+                {bioBusy ? "Verifying…" : "Tap to login"}
+              </p>
+              <p className="font-bold text-sm truncate">
+                Use Fingerprint / Face
+              </p>
+              {bioHint && (
+                <p className="text-[11px] text-muted-foreground truncate">{bioHint}</p>
+              )}
+            </div>
+          </div>
+        </button>
+      )}
+
       <form onSubmit={handleLogin} className="space-y-4">
         {params.get("email_hint") && (
           <div className="rounded-2xl border border-border bg-muted/40 px-4 py-3">
@@ -171,9 +256,10 @@ const Login = () => {
           type="button"
           variant="outline"
           size="lg"
-          onClick={() => toast.info("Biometric login native app में available होगा")}
+          onClick={handleBiometricClick}
+          disabled={bioBusy}
         >
-          <Fingerprint className="w-5 h-5" />
+          <Fingerprint className={`w-5 h-5 ${bioBusy ? "animate-pulse" : ""}`} />
           Biometric
         </Button>
       </div>

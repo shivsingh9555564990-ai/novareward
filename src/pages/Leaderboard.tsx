@@ -4,6 +4,7 @@ import { Crown, Medal, Sparkles, Trophy, Coins, TrendingUp, Users } from "lucide
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
+import SmartAvatar from "@/components/SmartAvatar";
 import { cn } from "@/lib/utils";
 import iconLeaderboard from "@/assets/icon-leaderboard.png";
 
@@ -90,7 +91,7 @@ const Leaderboard = () => {
                 const Icon = u.rank === 1 ? Crown : u.rank === 2 ? Medal : Trophy;
                 const tint = u.rank === 1 ? "text-coin" : u.rank === 2 ? "text-accent" : "text-secondary";
                 const size = isFirst ? "h-44" : "h-36";
-                const avatar = u.avatar_url || avatars[(u.rank - 1) % avatars.length];
+                const fallbackEmoji = avatars[(u.rank - 1) % avatars.length];
                 return (
                   <div key={u.user_id} className={cn("relative", isFirst && "-mt-4")}>
                     <div className={cn("glass relative flex flex-col items-center justify-end rounded-3xl p-3", size,
@@ -102,9 +103,12 @@ const Leaderboard = () => {
                       )}
                       <div className="absolute top-3 right-3 text-[10px] font-extrabold opacity-60">#{u.rank}</div>
                       <div className="h-12 w-12 rounded-full bg-gradient-primary p-[2px] shadow-glow">
-                        <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-xl">
-                          {avatar}
-                        </div>
+                        <SmartAvatar
+                          src={u.avatar_url}
+                          name={u.name}
+                          fallback={fallbackEmoji}
+                          className="h-full w-full text-xl"
+                        />
                       </div>
                       <p className="mt-2 truncate w-full text-center text-xs font-bold">{u.name}</p>
                       <p className="text-coin text-[11px] font-extrabold flex items-center gap-1">
@@ -148,7 +152,7 @@ const Leaderboard = () => {
               <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Top 100</h2>
               <div className="glass rounded-2xl p-2 space-y-1">
                 {rest.map((u) => {
-                  const avatar = u.avatar_url || avatars[(u.rank - 1) % avatars.length];
+                  const fallbackEmoji = avatars[(u.rank - 1) % avatars.length];
                   return (
                     <button
                       type="button"
@@ -160,9 +164,12 @@ const Leaderboard = () => {
                         #{u.rank}
                       </div>
                       <div className="h-9 w-9 rounded-full bg-gradient-primary p-[2px]">
-                        <div className="h-full w-full rounded-full bg-background flex items-center justify-center text-base">
-                          {avatar}
-                        </div>
+                        <SmartAvatar
+                          src={u.avatar_url}
+                          name={u.name}
+                          fallback={fallbackEmoji}
+                          className="h-full w-full text-base"
+                        />
                       </div>
                       <p className="flex-1 text-sm font-semibold truncate">{u.name}</p>
                       <p className="text-coin font-extrabold text-sm flex items-center gap-1 tabular-nums">

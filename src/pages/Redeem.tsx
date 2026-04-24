@@ -31,6 +31,7 @@ type Brand = {
 };
 
 const UPI_QUICK = [100, 250, 500, 1000, 2000];
+const TEST_AMOUNT = 2;
 
 const Redeem = () => {
   const { user } = useAuth();

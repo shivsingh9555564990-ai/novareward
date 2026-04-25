@@ -30,8 +30,8 @@ function err(error: string, status = 400, extra: Record<string, unknown> = {}) {
 }
 
 interface ActionCtx {
-  admin: ReturnType<typeof createClient>;
-  userClient: ReturnType<typeof createClient>;
+  admin: any;
+  userClient: any;
   adminUserId: string;
   payload: Record<string, any>;
 }
@@ -158,18 +158,20 @@ const handlers: Record<string, (ctx: ActionCtx) => Promise<Response>> = {
     if (!title) return err("title required");
 
     let recipients: { id: string }[] = [];
+    // deno-lint-ignore no-explicit-any
+    const asRows = (d: any): { id: string }[] => (d ?? []) as { id: string }[];
     if (target === "user_ids") {
       if (userIds.length === 0) return err("user_ids required");
       const { data, error } = await admin.from("profiles").select("id").in("id", userIds);
       if (error) return err(error.message, 500);
-      recipients = data ?? [];
+      recipients = asRows(data);
     } else {
       let q = admin.from("profiles").select("id");
       if (target === "banned_excluded") q = q.eq("is_banned", false);
       if (target === "suspicious") q = q.eq("is_suspicious", true);
       const { data, error } = await q.limit(50000);
       if (error) return err(error.message, 500);
-      recipients = data ?? [];
+      recipients = asRows(data);
     }
 
     if (recipients.length === 0) return ok({ sent: 0 });

@@ -24,8 +24,14 @@
 //
 // 1 INR ≈ 12 Nova Coins. 1 USD ≈ 990 Nova Coins (conservative ₹82.5 → 990 NC).
 
-import { createClient } from "npm:@supabase/supabase-js@2.95.0";
-import { corsHeaders } from "npm:@supabase/supabase-js@2.95.0/cors";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+};
 
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -38,7 +44,7 @@ const enc = (s: string) => new TextEncoder().encode(s);
 async function md5(s: string) {
   // md5 via Web Crypto isn't available — fall back to manual implementation
   // Use a tiny portable md5 from npm
-  const { default: md5fn } = await import("npm:blueimp-md5@2.19.0");
+  const { default: md5fn } = await import("https://esm.sh/blueimp-md5@2.19.0");
   return md5fn(s);
 }
 async function sha(algo: "SHA-1" | "SHA-256", s: string) {

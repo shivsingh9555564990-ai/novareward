@@ -164,7 +164,7 @@ const handlers: Record<string, (ctx: ActionCtx) => Promise<Response>> = {
       if (userIds.length === 0) return err("user_ids required");
       const { data, error } = await admin.from("profiles").select("id").in("id", userIds);
       if (error) return err(error.message, 500);
-      recipients = data ?? [];
+      recipients = asRows(data);
     } else {
       let q = admin.from("profiles").select("id");
       if (target === "banned_excluded") q = q.eq("is_banned", false);

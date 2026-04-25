@@ -158,6 +158,8 @@ const handlers: Record<string, (ctx: ActionCtx) => Promise<Response>> = {
     if (!title) return err("title required");
 
     let recipients: { id: string }[] = [];
+    // deno-lint-ignore no-explicit-any
+    const asRows = (d: any): { id: string }[] => (d ?? []) as { id: string }[];
     if (target === "user_ids") {
       if (userIds.length === 0) return err("user_ids required");
       const { data, error } = await admin.from("profiles").select("id").in("id", userIds);

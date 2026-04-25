@@ -30,8 +30,8 @@ function err(error: string, status = 400, extra: Record<string, unknown> = {}) {
 }
 
 interface ActionCtx {
-  admin: ReturnType<typeof createClient>;
-  userClient: ReturnType<typeof createClient>;
+  admin: any;
+  userClient: any;
   adminUserId: string;
   payload: Record<string, any>;
 }

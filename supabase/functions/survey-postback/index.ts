@@ -44,7 +44,7 @@ const enc = (s: string) => new TextEncoder().encode(s);
 async function md5(s: string) {
   // md5 via Web Crypto isn't available — fall back to manual implementation
   // Use a tiny portable md5 from npm
-  const { default: md5fn } = await import("npm:blueimp-md5@2.19.0");
+  const { default: md5fn } = await import("https://esm.sh/blueimp-md5@2.19.0");
   return md5fn(s);
 }
 async function sha(algo: "SHA-1" | "SHA-256", s: string) {

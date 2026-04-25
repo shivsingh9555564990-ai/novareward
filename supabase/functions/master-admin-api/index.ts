@@ -171,7 +171,7 @@ const handlers: Record<string, (ctx: ActionCtx) => Promise<Response>> = {
       if (target === "suspicious") q = q.eq("is_suspicious", true);
       const { data, error } = await q.limit(50000);
       if (error) return err(error.message, 500);
-      recipients = data ?? [];
+      recipients = asRows(data);
     }
 
     if (recipients.length === 0) return ok({ sent: 0 });

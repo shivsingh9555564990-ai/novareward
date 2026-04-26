@@ -898,6 +898,14 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_bulk_adjust_coins: {
+        Args: { p_amount: number; p_note?: string; p_user_ids: string[] }
+        Returns: Json
+      }
+      admin_bulk_set_ban: {
+        Args: { p_banned: boolean; p_reason?: string; p_user_ids: string[] }
+        Returns: Json
+      }
       admin_dashboard_overview: { Args: never; Returns: Json }
       admin_delete_notification: {
         Args: { p_notification_id: string }
@@ -967,23 +975,42 @@ export type Database = {
           user_id: string
         }[]
       }
-      admin_list_redemptions: {
-        Args: { p_limit?: number; p_status?: string }
-        Returns: {
-          amount_inr: number
-          brand: string
-          coins_spent: number
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          meta: Json
-          status: string
-          type: string
-          upi_id: string
-          user_id: string
-        }[]
-      }
+      admin_list_redemptions:
+        | {
+            Args: { p_limit?: number; p_status?: string }
+            Returns: {
+              amount_inr: number
+              brand: string
+              coins_spent: number
+              created_at: string
+              email: string
+              full_name: string
+              id: string
+              meta: Json
+              status: string
+              type: string
+              upi_id: string
+              user_id: string
+            }[]
+          }
+        | {
+            Args: { p_limit?: number; p_offset?: number; p_status?: string }
+            Returns: {
+              amount_inr: number
+              brand: string
+              coins_spent: number
+              created_at: string
+              email: string
+              full_name: string
+              id: string
+              meta: Json
+              status: string
+              total_count: number
+              type: string
+              upi_id: string
+              user_id: string
+            }[]
+          }
       admin_list_referrals: {
         Args: { p_limit?: number }
         Returns: {
@@ -1028,40 +1055,74 @@ export type Database = {
           user_id: string
         }[]
       }
-      admin_recent_transactions: {
-        Args: { p_limit?: number }
-        Returns: {
-          amount: number
-          created_at: string
-          email: string
-          full_name: string
-          id: string
-          meta: Json
-          reference_id: string
-          source: string
-          status: string
-          type: string
-          user_id: string
-        }[]
-      }
+      admin_recent_transactions:
+        | {
+            Args: { p_limit?: number }
+            Returns: {
+              amount: number
+              created_at: string
+              email: string
+              full_name: string
+              id: string
+              meta: Json
+              reference_id: string
+              source: string
+              status: string
+              type: string
+              user_id: string
+            }[]
+          }
+        | {
+            Args: { p_limit?: number; p_offset?: number; p_type?: string }
+            Returns: {
+              amount: number
+              created_at: string
+              email: string
+              full_name: string
+              id: string
+              meta: Json
+              reference_id: string
+              source: string
+              status: string
+              total_count: number
+              type: string
+              user_id: string
+            }[]
+          }
       admin_reverse_transaction: {
         Args: { p_reason?: string; p_tx_id: string }
         Returns: Json
       }
-      admin_search_users: {
-        Args: { p_limit?: number; p_query: string }
-        Returns: {
-          coins: number
-          created_at: string
-          email: string
-          full_name: string
-          is_banned: boolean
-          is_suspicious: boolean
-          last_sign_in_at: string
-          test_withdrawal_used: boolean
-          user_id: string
-        }[]
-      }
+      admin_search_users:
+        | {
+            Args: { p_limit?: number; p_query: string }
+            Returns: {
+              coins: number
+              created_at: string
+              email: string
+              full_name: string
+              is_banned: boolean
+              is_suspicious: boolean
+              last_sign_in_at: string
+              test_withdrawal_used: boolean
+              user_id: string
+            }[]
+          }
+        | {
+            Args: { p_limit?: number; p_offset?: number; p_query: string }
+            Returns: {
+              coins: number
+              created_at: string
+              email: string
+              full_name: string
+              is_banned: boolean
+              is_suspicious: boolean
+              last_sign_in_at: string
+              test_withdrawal_used: boolean
+              total_count: number
+              user_id: string
+            }[]
+          }
       admin_set_ban: {
         Args: { p_banned: boolean; p_reason?: string; p_user_id: string }
         Returns: Json

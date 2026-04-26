@@ -888,7 +888,85 @@ export type Database = {
         Args: { p_amount: number; p_note?: string; p_user_id: string }
         Returns: Json
       }
+      admin_broadcast_notification: {
+        Args: {
+          p_body: string
+          p_target?: string
+          p_title: string
+          p_type?: string
+          p_user_ids?: string[]
+        }
+        Returns: Json
+      }
+      admin_dashboard_overview: { Args: never; Returns: Json }
+      admin_delete_notification: {
+        Args: { p_notification_id: string }
+        Returns: Json
+      }
       admin_get_user: { Args: { p_user_id: string }; Returns: Json }
+      admin_list_game_plays: {
+        Args: { p_limit?: number }
+        Returns: {
+          created_at: string
+          device_fp: string
+          email: string
+          full_name: string
+          game: string
+          id: string
+          play_date: string
+          reward: number
+          score: number
+          user_id: string
+        }[]
+      }
+      admin_list_notifications: {
+        Args: { p_limit?: number }
+        Returns: {
+          body: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          meta: Json
+          read_at: string
+          title: string
+          type: string
+          user_id: string
+        }[]
+      }
+      admin_list_payment_methods: {
+        Args: { p_limit?: number }
+        Returns: {
+          account_holder: string
+          account_number: string
+          bank_name: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          ifsc_code: string
+          is_default: boolean
+          is_verified: boolean
+          kind: string
+          nickname: string
+          upi_vpa: string
+          user_id: string
+        }[]
+      }
+      admin_list_quiz_attempts: {
+        Args: { p_limit?: number }
+        Returns: {
+          category: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          reward: number
+          score: number
+          total: number
+          user_id: string
+        }[]
+      }
       admin_list_redemptions: {
         Args: { p_limit?: number; p_status?: string }
         Returns: {
@@ -906,6 +984,25 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_list_referrals: {
+        Args: { p_limit?: number }
+        Returns: {
+          code_used: string
+          created_at: string
+          credited_at: string
+          device_fp: string
+          id: string
+          referred_email: string
+          referred_name: string
+          referred_reward: number
+          referred_user_id: string
+          referrer_email: string
+          referrer_id: string
+          referrer_name: string
+          referrer_reward: number
+          status: string
+        }[]
+      }
       admin_list_user_transactions: {
         Args: { p_limit?: number; p_user_id: string }
         Returns: {
@@ -917,6 +1014,34 @@ export type Database = {
           source: string
           status: string
           type: string
+        }[]
+      }
+      admin_recent_signups: {
+        Args: { p_limit?: number }
+        Returns: {
+          coins: number
+          created_at: string
+          email: string
+          full_name: string
+          is_banned: boolean
+          is_suspicious: boolean
+          user_id: string
+        }[]
+      }
+      admin_recent_transactions: {
+        Args: { p_limit?: number }
+        Returns: {
+          amount: number
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          meta: Json
+          reference_id: string
+          source: string
+          status: string
+          type: string
+          user_id: string
         }[]
       }
       admin_reverse_transaction: {
@@ -945,7 +1070,22 @@ export type Database = {
         Args: { p_flag: boolean; p_user_id: string }
         Returns: Json
       }
+      admin_set_user_coins: {
+        Args: { p_note?: string; p_target_balance: number; p_user_id: string }
+        Returns: Json
+      }
       admin_stats: { Args: never; Returns: Json }
+      admin_top_users: {
+        Args: { p_limit?: number }
+        Returns: {
+          coins: number
+          created_at: string
+          email: string
+          full_name: string
+          is_banned: boolean
+          user_id: string
+        }[]
+      }
       admin_update_redemption: {
         Args: {
           p_action: string
